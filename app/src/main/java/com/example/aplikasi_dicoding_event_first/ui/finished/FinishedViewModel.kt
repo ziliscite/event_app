@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.utils.network.EventsFetcher
-import com.example.aplikasi_dicoding_event_first.utils.network.IEventsFetcher
 
 
 class FinishedViewModel : ViewModel() {

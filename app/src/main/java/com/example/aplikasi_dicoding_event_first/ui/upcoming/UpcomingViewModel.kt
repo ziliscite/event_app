@@ -14,7 +14,7 @@ class UpcomingViewModel : ViewModel() {
     val events: LiveData<List<ListEventsItem>> get() = _events
 
     fun getEvents() {
-        eventsFetcher.fetchEvents(0, TAG) {
+        eventsFetcher.fetchEvents(1, TAG) {
             _events.value = it
         }
     }

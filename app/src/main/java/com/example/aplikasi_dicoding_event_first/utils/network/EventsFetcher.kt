@@ -1,7 +1,6 @@
 package com.example.aplikasi_dicoding_event_first.utils.network
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.example.aplikasi_dicoding_event_first.data.response.ApiConfig
 import com.example.aplikasi_dicoding_event_first.data.response.EventsResponse
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem

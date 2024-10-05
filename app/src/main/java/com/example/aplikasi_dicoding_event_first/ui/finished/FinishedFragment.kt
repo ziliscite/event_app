@@ -9,13 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
-import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentFinishedBinding
 import com.example.aplikasi_dicoding_event_first.utils.ui.EventsListDelegate
 
 class FinishedFragment : Fragment() {
-//    private lateinit var adapter: EventsListAdapter
-
     private val viewModel: FinishedViewModel by viewModels()
 
     private var _binding: FragmentFinishedBinding? = null
@@ -30,18 +27,7 @@ class FinishedFragment : Fragment() {
     ): View {
         _binding = FragmentFinishedBinding.inflate(inflater, container, false)
 
-        eventsListDelegate = EventsListDelegate(
-            binding.rvEvents,
-            LinearLayoutManager(requireContext()),
-            EventsListAdapter{
-                val toEventDetail = FinishedFragmentDirections.actionNavigationFinishedToDetailedFragment(
-                    // Passing the id using safeArgs
-                    it
-                )
-
-                findNavController().navigate(toEventDetail)
-            }
-        )
+        createEventsListDelegate()
 
         return binding.root
     }
@@ -58,26 +44,20 @@ class FinishedFragment : Fragment() {
         viewModel.getEvents()
     }
 
-//    private fun initializeAdapter() {
-//        val layoutManager = LinearLayoutManager(requireContext())
-//        binding.rvEvents.layoutManager = layoutManager
-//
-//        adapter = EventsListAdapter{
-//            val toEventDetail = FinishedFragmentDirections.actionNavigationFinishedToDetailedFragment(
-//                // Passing the id using safeArgs
-//                it
-//            )
-//
-//            findNavController().navigate(toEventDetail)
-//        }
-//
-//        binding.rvEvents.adapter = adapter
-//    }
-//
-//    private fun setEvents(eventsList: List<ListEventsItem>) {
-//        adapter.submitList(eventsList)
-//        binding.rvEvents.adapter = adapter
-//    }
+    private fun createEventsListDelegate() {
+        eventsListDelegate = EventsListDelegate(
+            binding.rvEvents,
+            LinearLayoutManager(requireContext()),
+            EventsListAdapter{
+                val toEventDetail = FinishedFragmentDirections.actionNavigationFinishedToDetailedFragment(
+                    // Passing the id using safeArgs
+                    it
+                )
+
+                findNavController().navigate(toEventDetail)
+            }
+        )
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
