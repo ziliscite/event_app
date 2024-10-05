@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Aplikasi Dicoding Event</string>
+    <string name="title_home">Home</string>
+    <string name="title_upcoming">Upcoming</string>
+    <string name="title_finished">Finished</string>
+    <string name="todo">TODO</string>
+
+    <string name="preview_event_title">IDCamp x Dicoding Live #1 - Beyond the Basics: Elevate Your Career as a Full Stack Developer in 2024</string>
+    <string name="preview_event_summary">
+        IDCamp x Dicoding Live 2024 edisi pertama ini akan kupas tuntas seputar Full Stack Developer.
+    </string>
+
+    <string name="fragment_detailed">Detailed</string>
+
+</resources>

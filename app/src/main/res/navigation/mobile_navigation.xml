@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.aplikasi_dicoding_event_first.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_detailedFragment"
+            app:destination="@id/detailedFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_upcoming"
+        android:name="com.example.aplikasi_dicoding_event_first.ui.upcoming.UpcomingFragment"
+        android:label="@string/title_upcoming"
+        tools:layout="@layout/fragment_upcoming" />
+
+    <fragment
+        android:id="@+id/detailedFragment"
+        android:name="com.example.aplikasi_dicoding_event_first.ui.detailed.DetailedFragment"
+        android:label="@string/fragment_detailed"
+        tools:layout="@layout/fragment_detailed" >
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_finished"
+        android:name="com.example.aplikasi_dicoding_event_first.ui.finished.FinishedFragment"
+        android:label="@string/title_finished"
+        tools:layout="@layout/fragment_finished" >
+        <action
+            android:id="@+id/action_navigation_finished_to_detailedFragment"
+            app:destination="@id/detailedFragment" />
+    </fragment>
+</navigation>
