@@ -1,7 +1,5 @@
 package com.example.aplikasi_dicoding_event_first.ui.finished
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +9,6 @@ import com.example.aplikasi_dicoding_event_first.utils.network.EventsFetcher
 import com.example.aplikasi_dicoding_event_first.utils.ui.LoadingStateDelegate
 import com.example.aplikasi_dicoding_event_first.utils.ui.ScrollStateDelegate
 import kotlinx.coroutines.launch
-import java.util.concurrent.Executors
-
 
 class FinishedViewModel : ViewModel() {
     private val eventsFetcher: EventsFetcher = EventsFetcher
@@ -20,15 +16,24 @@ class FinishedViewModel : ViewModel() {
     private val _events = MutableLiveData<List<ListEventsItem>>()
     val events: LiveData<List<ListEventsItem>> get() = _events
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> get() = _isLoading
+    val loadingState: LoadingStateDelegate = LoadingStateDelegate()
 
     fun getEvents() { viewModelScope.launch {
-        _isLoading.value = true
-        eventsFetcher.fetchEvents(0, logTag = TAG)?.let {
-            _events.value = it
+        // Kinda sick of seeing the brief loading scene when the data is instantly loaded...
+        if (!_events.value.isNullOrEmpty()) {
+            loadingState.setLoading(false)
+            return@launch
         }
-        _isLoading.value = false
+
+        // Less repetitions? Idk, just trying my best
+        loadingState.wrapRequest {
+            eventsFetcher.fetchEvents(0, logTag = TAG)?.let {
+                _events.value = it
+            } ?: run {
+                // To later handle if there is an error
+                // Like, showing a *data not available* screen
+            }
+        }
     }}
 
     val scrollState: ScrollStateDelegate = ScrollStateDelegate()

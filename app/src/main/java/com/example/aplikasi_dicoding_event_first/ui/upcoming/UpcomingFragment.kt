@@ -43,8 +43,12 @@ class UpcomingFragment : Fragment() {
             recyclerViewDelegate.update(it)
 
             viewModel.scrollState.position.observe(viewLifecycleOwner) { pos ->
-                recyclerViewDelegate.setPosition(pos)
+                recyclerViewDelegate.setPosition(pos.first, pos.second)
             }
+        }
+
+        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
         }
     }
 
@@ -59,6 +63,10 @@ class UpcomingFragment : Fragment() {
         )
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -66,6 +74,7 @@ class UpcomingFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.scrollState.savePosition(recyclerViewDelegate.getPosition())
+        val position = recyclerViewDelegate.getPosition()
+        viewModel.scrollState.savePosition(position.first, position.second)
     }
 }

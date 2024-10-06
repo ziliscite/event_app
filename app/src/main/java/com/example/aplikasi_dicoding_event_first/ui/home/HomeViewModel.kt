@@ -5,9 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
-import com.example.aplikasi_dicoding_event_first.ui.finished.FinishedViewModel
-import com.example.aplikasi_dicoding_event_first.ui.upcoming.UpcomingViewModel
-import com.example.aplikasi_dicoding_event_first.ui.upcoming.UpcomingViewModel.Companion
 import com.example.aplikasi_dicoding_event_first.utils.network.EventsFetcher
 import kotlinx.coroutines.launch
 

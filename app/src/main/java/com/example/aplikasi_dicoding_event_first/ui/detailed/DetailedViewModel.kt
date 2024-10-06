@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aplikasi_dicoding_event_first.data.response.Event
 import com.example.aplikasi_dicoding_event_first.utils.network.EventsFetcher
+import com.example.aplikasi_dicoding_event_first.utils.ui.LoadingStateDelegate
 import kotlinx.coroutines.launch
 
 class DetailedViewModel(
@@ -16,9 +17,18 @@ class DetailedViewModel(
     private val _event = MutableLiveData<Event>()
     val event: LiveData<Event> get() = _event
 
+    val loadingState: LoadingStateDelegate = LoadingStateDelegate()
+
     fun getEvent() { viewModelScope.launch {
-        eventsFetcher.fetchEventDetail(eventId, logTag = TAG)?.let {
-            _event.value = it
+        if (_event.value != null) {
+            loadingState.setLoading(false)
+            return@launch
+        }
+
+        loadingState.wrapRequest {
+            eventsFetcher.fetchEventDetail(eventId, logTag = TAG)?.let {
+                _event.value = it
+            }
         }
     }}
 

@@ -1,7 +1,6 @@
 package com.example.aplikasi_dicoding_event_first.ui.finished
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,11 +44,11 @@ class FinishedFragment : Fragment() {
 
             // Observe scroll position
             viewModel.scrollState.position.observe(viewLifecycleOwner) { pos ->
-                recyclerViewDelegate.setPosition(pos)
+                recyclerViewDelegate.setPosition(pos.first, pos.second)
             }
         }
 
-        viewModel.isLoading.observe(viewLifecycleOwner) {
+        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
             showLoading(it)
         }
     }
@@ -76,6 +75,7 @@ class FinishedFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.scrollState.savePosition(recyclerViewDelegate.getPosition())
+        val position = recyclerViewDelegate.getPosition()
+        viewModel.scrollState.savePosition(position.first, position.second)
     }
 }

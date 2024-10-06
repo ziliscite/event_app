@@ -11,10 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.example.aplikasi_dicoding_event_first.R
 import com.example.aplikasi_dicoding_event_first.data.response.Event
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentDetailedBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DetailedFragment : Fragment() {
     private var _binding: FragmentDetailedBinding? = null
@@ -34,12 +32,17 @@ class DetailedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Getting the id passed from both upcoming & finished fragments (soon, home too)
         val args: DetailedFragmentArgs by navArgs()
         initializeViewModel(args.id)
 
         viewModel.getEvent()
 
         initializeNavigation()
+
+        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
+        }
     }
 
     override fun setMenuVisibility(menuVisible: Boolean) {
@@ -53,26 +56,22 @@ class DetailedFragment : Fragment() {
     }
 
     private fun initializeNavigation() {
-        // Make the Activity's ActionBar disappear
+        // Make the Activity's ActionBar disappear -- Ay, not the "Action Bar", but just the title
         manageActionBar(true)
+
+        // So that the action bar, when pressed, it will do the animation
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Go back to backStack when the arrow or the back button is pressed
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             findNavController().popBackStack()
         }
-
-        // Also hide the BottomNavigationView when detail fragment is displayed (Cuz we don't want to see it)
-        (activity as AppCompatActivity).findViewById<BottomNavigationView>(R.id.nav_view)?.visibility = View.GONE
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-//         Show the the ActionBar and BottomNavigationView again when we go back
+        // Show the the ActionBar again when we go back
         manageActionBar(false)
-
-        (activity as AppCompatActivity).findViewById<BottomNavigationView>(R.id.nav_view)?.visibility = View.VISIBLE
-
         _binding = null
     }
 
@@ -83,6 +82,10 @@ class DetailedFragment : Fragment() {
         viewModel.event.observe(viewLifecycleOwner) {
             setLayout(it)
         }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun setLayout(event: Event) {

@@ -20,12 +20,18 @@ class RecyclerViewDelegate(
         recyclerView.adapter = adapter
     }
 
-    fun setPosition(position: Int) {
-        layoutManager.scrollToPosition(position)
+    fun setPosition(position: Int, offset: Int) {
+        val layoutManager = layoutManager as LinearLayoutManager
+        layoutManager.scrollToPositionWithOffset(position, offset)
     }
 
-    fun getPosition(): Int {
-        val layout = layoutManager as LinearLayoutManager
-        return layout.findFirstVisibleItemPosition()
+    fun getPosition(): Pair<Int, Int> {
+        val layoutManager = layoutManager as LinearLayoutManager
+
+        val position = layoutManager.findFirstVisibleItemPosition()
+        val view = layoutManager.findViewByPosition(position)
+
+        val offset = view?.top ?: 0
+        return Pair(position, offset)
     }
 }

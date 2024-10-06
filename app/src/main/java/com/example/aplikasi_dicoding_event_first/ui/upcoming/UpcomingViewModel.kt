@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.utils.network.EventsFetcher
+import com.example.aplikasi_dicoding_event_first.utils.ui.LoadingStateDelegate
 import com.example.aplikasi_dicoding_event_first.utils.ui.ScrollStateDelegate
 import kotlinx.coroutines.launch
 
@@ -15,15 +16,19 @@ class UpcomingViewModel : ViewModel() {
     private val _events = MutableLiveData<List<ListEventsItem>>()
     val events: LiveData<List<ListEventsItem>> get() = _events
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> get() = _isLoading
+    val loadingState: LoadingStateDelegate = LoadingStateDelegate()
 
     fun getEvents() { viewModelScope.launch {
-        _isLoading.value = true
-        eventsFetcher.fetchEvents(1, logTag = TAG)?.let {
-            _events.value = it
+        if (!_events.value.isNullOrEmpty()) {
+            loadingState.setLoading(false)
+            return@launch
         }
-        _isLoading.value = false
+
+        loadingState.wrapRequest {
+            eventsFetcher.fetchEvents(1, logTag = TAG)?.let {
+                _events.value = it
+            }
+        }
     }}
 
     val scrollState: ScrollStateDelegate = ScrollStateDelegate()
