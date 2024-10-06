@@ -34,28 +34,16 @@ class DetailedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initializeNavigation()
-
         val args: DetailedFragmentArgs by navArgs()
-
         initializeViewModel(args.id)
 
         viewModel.getEvent()
+
+        initializeNavigation()
     }
 
-    private fun initializeViewModel(eventId: Int) {
-        val viewModelFactory = DetailedViewModelFactory(eventId)
-        viewModel = ViewModelProvider(this, viewModelFactory)[DetailedViewModel::class.java]
-
-        viewModel.event.observe(viewLifecycleOwner) {
-            setLayout(it)
-        }
-    }
-
-    private fun setLayout(event: Event) {
-        Glide.with(requireContext())
-            .load(event.imageLogo)
-            .into(binding.ivDetailEvent)
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(false)
     }
 
     private fun manageActionBar(create: Boolean) {
@@ -80,11 +68,26 @@ class DetailedFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
 
-        // Show the the ActionBar and BottomNavigationView again when we go back
+//         Show the the ActionBar and BottomNavigationView again when we go back
         manageActionBar(false)
 
         (activity as AppCompatActivity).findViewById<BottomNavigationView>(R.id.nav_view)?.visibility = View.VISIBLE
 
         _binding = null
+    }
+
+    private fun initializeViewModel(eventId: Int) {
+        val viewModelFactory = DetailedViewModelFactory(eventId)
+        viewModel = ViewModelProvider(this, viewModelFactory)[DetailedViewModel::class.java]
+
+        viewModel.event.observe(viewLifecycleOwner) {
+            setLayout(it)
+        }
+    }
+
+    private fun setLayout(event: Event) {
+        Glide.with(requireContext())
+            .load(event.imageLogo)
+            .into(binding.ivDetailEvent)
     }
 }

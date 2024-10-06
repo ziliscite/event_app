@@ -1,0 +1,13 @@
+package com.example.aplikasi_dicoding_event_first.utils.ui
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+
+class LoadingStateDelegate {
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.value = isLoading
+    }
+}

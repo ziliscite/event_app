@@ -37,14 +37,6 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.label == DetailedFragment::class.java.simpleName) {
-                navView.visibility = View.GONE
-            } else {
-                navView.visibility = View.VISIBLE
-            }
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

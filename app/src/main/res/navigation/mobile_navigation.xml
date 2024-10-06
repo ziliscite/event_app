@@ -42,6 +42,8 @@
         tools:layout="@layout/fragment_finished" >
         <action
             android:id="@+id/action_navigation_finished_to_detailedFragment"
-            app:destination="@id/detailedFragment" />
+            app:destination="@id/detailedFragment"
+            app:enterAnim="@anim/fragment_in"
+            app:exitAnim="@anim/fragment_out" />
     </fragment>
 </navigation>

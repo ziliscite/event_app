@@ -1,41 +1,57 @@
 package com.example.aplikasi_dicoding_event_first.utils.network
 
 import android.util.Log
-import com.example.aplikasi_dicoding_event_first.data.response.ApiConfig
-import com.example.aplikasi_dicoding_event_first.data.response.EventsResponse
+import com.example.aplikasi_dicoding_event_first.data.retrofit.ApiConfig
+import com.example.aplikasi_dicoding_event_first.data.response.Event
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class EventsFetcher : IEventsFetcher {
-    override fun fetchEvents(
-        active: Int,
-        logTag: String,
-        callback: (List<ListEventsItem>?) -> Unit
-    ) {
-        val client = ApiConfig.getApiService().getEvents(active)
-        client.enqueue(object : Callback<EventsResponse> {
-            override fun onResponse(
-                call: Call<EventsResponse>,
-                response: Response<EventsResponse>
-            ) {
-                if (!response.isSuccessful) {
-                    Log.e(logTag, "onFailure: ${response.message()}")
-                    callback(null)
-                    return
+// No state is held, so an object it is
+object EventsFetcher {
+    suspend fun fetchEvents(
+        active: Int? = null,
+        search: String = "",
+        limit: Int? = null,
+        logTag: String
+    ): List<ListEventsItem>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = ApiConfig
+                    .getApiService()
+                    .getEvents(active, search, limit)
+
+                if (response.error) {
+                    throw Exception(response.message)
                 }
 
-                val responseBody = response.body()
-                callback(responseBody?.listEvents)
+                response.listEvents
+            } catch (e: Exception) {
+                Log.e(logTag, "onFailure: ${e.message}")
+                null
             }
+        }
+    }
 
-            override fun onFailure(
-                call: Call<EventsResponse>, t: Throwable
-            ) {
-                Log.e(logTag, "onFailure: ${t.message}")
-                callback(null)
+    suspend fun fetchEventDetail(
+        id: Int,
+        logTag: String
+    ) : Event? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = ApiConfig
+                    .getApiService()
+                    .getEventDetail(id)
+
+                if (response.error) {
+                    throw Exception(response.message)
+                }
+
+                response.event
+            } catch (e: Exception) {
+                Log.e(logTag, "onFailure: ${e.message}")
+                null
             }
-        })
+        }
     }
 }
