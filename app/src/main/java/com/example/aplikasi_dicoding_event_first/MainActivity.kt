@@ -5,7 +5,6 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.doOnPreDraw
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 // Bring the bottom nav back into view when returning to a fragment
                 navView.visibility = View.VISIBLE
                 navView.animate()
-                    .translationX(0f)  // Moves it back to its original position
+                    .translationX(0f)
                     .setDuration(75)
                     .setInterpolator(AccelerateDecelerateInterpolator())
                     .start()

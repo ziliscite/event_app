@@ -6,11 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
+import com.example.aplikasi_dicoding_event_first.MainActivity
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentFinishedBinding
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class FinishedFragment : Fragment() {
     private val viewModel: FinishedViewModel by viewModels()
@@ -27,7 +31,7 @@ class FinishedFragment : Fragment() {
     ): View {
         _binding = FragmentFinishedBinding.inflate(inflater, container, false)
 
-        createEventsListDelegate()
+        createRecyclerViewDelegate()
 
         return binding.root
     }
@@ -37,10 +41,16 @@ class FinishedFragment : Fragment() {
 
         recyclerViewDelegate.setup()
 
-        viewModel.getEvents()
+        viewModel.viewModelScope.launch {
+            delay(2000)
+            viewModel.getEvents()
+        }
 
+        searchEvents("Robotaaaaaaaaaaaaaaaaaaaaaaaa")
         viewModel.events.observe(viewLifecycleOwner) {
-            recyclerViewDelegate.update(it)
+            it?.let {
+                recyclerViewDelegate.update(it)
+            }
 
             // Observe scroll position
             viewModel.scrollState.position.observe(viewLifecycleOwner) { pos ->
@@ -48,12 +58,17 @@ class FinishedFragment : Fragment() {
             }
         }
 
+        viewModel.isError.observe(viewLifecycleOwner) {
+            // Might wanna do the same like position
+            showError(it)
+        }
+
         viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
             showLoading(it)
         }
     }
 
-    private fun createEventsListDelegate() {
+    private fun createRecyclerViewDelegate() {
         recyclerViewDelegate = RecyclerViewDelegate(
             binding.rvEvents,
             LinearLayoutManager(requireContext()),
@@ -62,6 +77,23 @@ class FinishedFragment : Fragment() {
                 findNavController().navigate(toEventDetail)
             }
         )
+    }
+
+    fun searchEvents(query: String) {
+        viewModel.getEvents(query)
+    }
+
+    private fun showError(isVisible: Boolean, message: String = "") {
+        val visibility: Int = if (isVisible) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+
+        binding.tvEmoji.visibility = visibility
+
+        binding.tvMessage.text = message
+        binding.tvMessage.visibility = visibility
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -75,6 +107,7 @@ class FinishedFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+
         val position = recyclerViewDelegate.getPosition()
         viewModel.scrollState.savePosition(position.first, position.second)
     }

@@ -27,7 +27,7 @@ class UpcomingFragment : Fragment() {
     ): View {
         _binding = FragmentUpcomingBinding.inflate(inflater, container, false)
 
-        createEventsListDelegate()
+        createRecyclerViewDelegate()
 
         return binding.root
     }
@@ -52,7 +52,7 @@ class UpcomingFragment : Fragment() {
         }
     }
 
-    private fun createEventsListDelegate() {
+    private fun createRecyclerViewDelegate() {
         recyclerViewDelegate = RecyclerViewDelegate(
             binding.rvEvents,
             LinearLayoutManager(requireContext()),

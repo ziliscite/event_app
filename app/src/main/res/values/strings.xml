@@ -11,5 +11,8 @@
     </string>
 
     <string name="fragment_detailed">Detailed</string>
+    <string name="search">Search</string>
 
+    <string name="emoji">o(TヘTo)</string>
+    <string name="placeholder">Text Placeholder</string>
 </resources>

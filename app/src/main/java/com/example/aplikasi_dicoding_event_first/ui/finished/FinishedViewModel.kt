@@ -18,7 +18,11 @@ class FinishedViewModel : ViewModel() {
 
     val loadingState: LoadingStateDelegate = LoadingStateDelegate()
 
-    fun getEvents() { viewModelScope.launch {
+    private val _isError = MutableLiveData<Boolean>()
+    val isError: LiveData<Boolean> get() = _isError
+
+
+    fun getEvents(query: String = "") { viewModelScope.launch {
         // Kinda sick of seeing the brief loading scene when the data is instantly loaded...
         if (!_events.value.isNullOrEmpty()) {
             loadingState.setLoading(false)
@@ -27,12 +31,27 @@ class FinishedViewModel : ViewModel() {
 
         // Less repetitions? Idk, just trying my best
         loadingState.wrapRequest {
-            eventsFetcher.fetchEvents(0, logTag = TAG)?.let {
+            // We might want to also return the message from events fetcher
+            eventsFetcher.fetchEvents(0, search = query, logTag = TAG)?.let {
                 _events.value = it
             } ?: run {
+                _isError.value = true
                 // To later handle if there is an error
                 // Like, showing a *data not available* screen
             }
+            // We do this after commit, justin case
+
+//            val response = eventsFetcher.fetchEvents(0, search = query, logTag = TAG)
+//            response?.listEvents?.let {
+//                if (it.isEmpty()) {
+//                    _isError.value = true
+//                } else {
+//                    _events.value = it
+//                    _isError.value = false
+//                }
+//            } ?: run {
+//                _isError.value = true
+//            }
         }
     }}
 
