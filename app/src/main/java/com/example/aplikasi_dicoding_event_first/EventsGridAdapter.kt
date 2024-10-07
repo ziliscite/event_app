@@ -3,33 +3,32 @@ package com.example.aplikasi_dicoding_event_first
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
-import com.example.aplikasi_dicoding_event_first.databinding.EventCardListBinding
+import com.example.aplikasi_dicoding_event_first.databinding.EventCardBinding
 
-class EventsListAdapter(
+class EventsGridAdapter(
     private val onClick: (Int) -> Unit
-) : ListAdapter<ListEventsItem, EventsListAdapter.MyViewHolder>(DIFF_CALLBACK) {
+) : ListAdapter<ListEventsItem, EventsGridAdapter.MyViewHolder>(DIFF_CALLBACK) {
     class MyViewHolder(
-        private val binding: EventCardListBinding,
+        private val binding: EventCardBinding,
         private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(event: ListEventsItem){
             Glide.with(context)
                 .load(event.imageLogo)
-                .into(binding.ivEvent)
+                .into(binding.ivEventCard)
 
-            binding.tvTitle.text = event.name
-            binding.tvSummary.text = event.summary
+            binding.ivTitleCard.text = event.name
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val context = parent.context
-        val binding = EventCardListBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = EventCardBinding.inflate(LayoutInflater.from(context), parent, false)
         return MyViewHolder(binding, context)
     }
 

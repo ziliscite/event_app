@@ -5,6 +5,7 @@ import com.example.aplikasi_dicoding_event_first.data.response.EventsResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.Response
 
 interface ApiService {
     @GET("events")
@@ -15,7 +16,7 @@ interface ApiService {
         @Query("q") q: String = "",
         // Event list limit (default 40)
         @Query("limit") limit: Int? = null
-    ): EventsResponse
+    ): Response<EventsResponse>
 
     @GET("events/{id}")
     suspend fun getEventDetail(

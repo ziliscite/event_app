@@ -7,8 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import com.example.aplikasi_dicoding_event_first.EventsGridAdapter
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
+import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentUpcomingBinding
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
 
@@ -18,7 +22,7 @@ class UpcomingFragment : Fragment() {
     private var _binding: FragmentUpcomingBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var recyclerViewDelegate: RecyclerViewDelegate
+    private lateinit var recyclerViewDelegate: RecyclerViewDelegate<ListAdapter<ListEventsItem, *>>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,8 +59,8 @@ class UpcomingFragment : Fragment() {
     private fun createRecyclerViewDelegate() {
         recyclerViewDelegate = RecyclerViewDelegate(
             binding.rvEvents,
-            LinearLayoutManager(requireContext()),
-            EventsListAdapter{
+            GridLayoutManager(requireContext(), 2),
+            EventsGridAdapter{
                 val toEventDetail = UpcomingFragmentDirections.actionNavigationUpcomingToDetailedFragment(it)
                 findNavController().navigate(toEventDetail)
             }
