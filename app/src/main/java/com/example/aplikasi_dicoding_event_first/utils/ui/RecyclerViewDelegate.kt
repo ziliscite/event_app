@@ -3,9 +3,9 @@ package com.example.aplikasi_dicoding_event_first.utils.ui
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aplikasi_dicoding_event_first.EventsListAdapter
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 
+// Delegating recyclerview and its adapter
 class RecyclerViewDelegate <in T: ListAdapter<ListEventsItem, *>> (
     private val recyclerView: RecyclerView,
     private val layoutManager: RecyclerView.LayoutManager,
@@ -13,12 +13,12 @@ class RecyclerViewDelegate <in T: ListAdapter<ListEventsItem, *>> (
 ) {
     fun setup() {
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = adapter as ListAdapter<*, *>
+        recyclerView.adapter = adapter
     }
 
     fun update(newData: List<ListEventsItem>) {
         adapter.submitList(newData)
-        recyclerView.adapter = adapter as ListAdapter<*, *>
+        recyclerView.adapter = adapter
     }
 
     fun setPosition(position: Int, offset: Int) {

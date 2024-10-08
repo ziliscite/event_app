@@ -12,8 +12,4 @@ class LoadingStateDelegate {
         callback()
         _isLoading.value = false
     }
-
-    fun setLoading(isLoading: Boolean) {
-        _isLoading.value = isLoading
-    }
 }

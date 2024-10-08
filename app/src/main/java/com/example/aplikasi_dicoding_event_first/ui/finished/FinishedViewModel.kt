@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aplikasi_dicoding_event_first.data.response.EventsResponse
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.utils.network.EventsFetcher
 import com.example.aplikasi_dicoding_event_first.utils.network.EventsResponseHandler
@@ -24,8 +23,11 @@ class FinishedViewModel : ViewModel() {
 
     val errorState: ErrorPageDelegate = ErrorPageDelegate()
 
+    // Its like, imitation of event in the previous Dicoding exercise
+    private val searchState = MutableLiveData(false)
+
     fun getEvents(query: String) { viewModelScope.launch {
-        // Less repetitions? Idk, just trying my best
+        searchState.value = true
         loadingState.wrapRequest {
             val response = eventsFetcher.fetchEvents(0, search = query, logTag = TAG)
             eventsHandler.getEventsHandler(response, errorState) {
@@ -33,6 +35,19 @@ class FinishedViewModel : ViewModel() {
             }
         }
     }}
+
+    fun initiateEvents() {
+        if (_events.value != null && searchState.value == false) {
+            return
+        }
+
+        getEvents("")
+        searchState.value = false
+    }
+
+    fun onChange() {
+        searchState.value = false
+    }
 
     val scrollState: ScrollStateDelegate = ScrollStateDelegate()
 

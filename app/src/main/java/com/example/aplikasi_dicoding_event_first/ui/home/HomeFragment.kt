@@ -4,15 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.aplikasi_dicoding_event_first.EventsGridAdapter
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentHomeBinding
-import com.example.aplikasi_dicoding_event_first.ui.finished.FinishedFragmentDirections
+import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
+import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorPageDelegate
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -22,6 +26,8 @@ class HomeFragment : Fragment() {
     private lateinit var finishedAdapter: EventsListAdapter
 
     private val viewModel: HomeViewModel by viewModels()
+    private lateinit var errorUpcomingPageNavigator: ErrorFragmentNavigator
+    private lateinit var errorFinishedPageNavigator: ErrorFragmentNavigator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,14 +36,22 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        errorUpcomingPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentUpcomingContainer)
+        errorFinishedPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentFinishedContainer)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initializeAdapters()
+        viewModel.getUpcomingEvents()
+        viewModel.getFinishedEvents()
 
+        initializeAdapters()
+        initializeViewModel()
+    }
+
+    private fun initializeViewModel(){
         viewModel.upcomingEvents.observe(viewLifecycleOwner) {
             updateUpcoming(it)
         }
@@ -46,8 +60,64 @@ class HomeFragment : Fragment() {
             updateFinished(it)
         }
 
-        viewModel.getUpcomingEvents()
-        viewModel.getFinishedEvents()
+        viewModel.finishedErrorState.error.observe(viewLifecycleOwner) {
+            errorFinishedPageNavigator.showError(it.first, it.second)
+        }
+
+        viewModel.upcomingErrorState.error.observe(viewLifecycleOwner) {
+            errorUpcomingPageNavigator.showError(it.first, it.second)
+        }
+
+        viewModel.finishedLoadingState.isLoading.observe(viewLifecycleOwner) {
+            showLoading(
+                it, binding.pbFinishedEvents, viewModel.finishedErrorState,
+                binding.rvFinishedEvents, binding.errorFragmentFinishedContainer
+            )
+        }
+
+        viewModel.upcomingLoadingState.isLoading.observe(viewLifecycleOwner) {
+            showLoading(
+                it, binding.pbUpcomingEvents, viewModel.upcomingErrorState,
+                binding.rvUpcomingEvents, binding.errorFragmentUpcomingContainer
+            )
+        }
+    }
+
+    private fun showLoading(
+        isLoading: Boolean, progressBar: ProgressBar, errorState: ErrorPageDelegate,
+        recyclerView: RecyclerView, errorFragmentContainer: FragmentContainerView
+    ) {
+        if (isLoading) {
+            progressBar.visibility = View.VISIBLE
+            hideUI(errorState, recyclerView, errorFragmentContainer)
+        } else {
+            progressBar.visibility = View.GONE
+            showUI(errorState, recyclerView, errorFragmentContainer)
+        }
+    }
+
+    private fun hideUI(
+        errorState: ErrorPageDelegate,
+        recyclerView: RecyclerView,
+        errorFragmentContainer: FragmentContainerView
+    ) {
+        if (errorState.error.value?.first != true) {
+            recyclerView.visibility = View.GONE
+        } else {
+            errorFragmentContainer.visibility = View.GONE
+        }
+    }
+
+    private fun showUI(
+        errorState: ErrorPageDelegate,
+        recyclerView: RecyclerView,
+        errorFragmentContainer: FragmentContainerView
+    ) {
+        if (errorState.error.value?.first != true) {
+            recyclerView.visibility = View.VISIBLE
+        } else {
+            errorFragmentContainer.visibility = View.VISIBLE
+        }
     }
 
     private fun updateUpcoming(newData: List<ListEventsItem>) {
@@ -89,5 +159,11 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onPause() {
+        super.onPause()
+        errorUpcomingPageNavigator.removeErrorFragment()
+        errorFinishedPageNavigator.removeErrorFragment()
     }
 }

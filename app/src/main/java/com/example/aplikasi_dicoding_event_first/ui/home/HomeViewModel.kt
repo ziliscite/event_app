@@ -24,31 +24,30 @@ class HomeViewModel : ViewModel() {
     val finishedLoadingState: LoadingStateDelegate = LoadingStateDelegate()
     val upcomingLoadingState: LoadingStateDelegate = LoadingStateDelegate()
 
-    val errorState: ErrorPageDelegate = ErrorPageDelegate()
+    val finishedErrorState: ErrorPageDelegate = ErrorPageDelegate()
+    val upcomingErrorState: ErrorPageDelegate = ErrorPageDelegate()
 
     fun getFinishedEvents() { viewModelScope.launch {
-        if (!_finishedEvents.value.isNullOrEmpty()) {
-            finishedLoadingState.setLoading(false)
+        if (!_finishedEvents.value.isNullOrEmpty() && finishedErrorState.error.value?.first == false) {
             return@launch
         }
 
         finishedLoadingState.wrapRequest {
             val response = eventsFetcher.fetchEvents(0, limit = 5, logTag = TAG)
-            eventsHandler.getEventsHandler(response, errorState) {
+            eventsHandler.getEventsHandler(response, finishedErrorState) {
                 _finishedEvents.value = it
             }
         }
     }}
 
     fun getUpcomingEvents() { viewModelScope.launch {
-        if (!_upcomingEvents.value.isNullOrEmpty()) {
-            upcomingLoadingState.setLoading(false)
+        if (!_upcomingEvents.value.isNullOrEmpty() && upcomingErrorState.error.value?.first == false) {
             return@launch
         }
 
         upcomingLoadingState.wrapRequest {
             val response = eventsFetcher.fetchEvents(1, limit = 5, logTag = TAG)
-            eventsHandler.getEventsHandler(response, errorState) {
+            eventsHandler.getEventsHandler(response, upcomingErrorState) {
                 _upcomingEvents.value = it
             }
         }

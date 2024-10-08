@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 // Since there is no state, I figured its okay to just make it a singleton
 object ApiConfig {
@@ -14,6 +15,9 @@ object ApiConfig {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            // I'm not gonna wait minutes just to get connection error
+            .connectTimeout(15, TimeUnit.SECONDS) // Connection timeout
+            .readTimeout(15, TimeUnit.SECONDS)    // Read timeout
             .build()
 
         val retrofit = Retrofit.Builder()

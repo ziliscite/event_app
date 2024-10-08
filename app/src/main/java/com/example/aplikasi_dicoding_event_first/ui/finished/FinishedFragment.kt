@@ -2,25 +2,20 @@ package com.example.aplikasi_dicoding_event_first.ui.finished
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
-import com.example.aplikasi_dicoding_event_first.R
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentFinishedBinding
-import com.example.aplikasi_dicoding_event_first.ui.error.ErrorFragment
+import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class FinishedFragment : Fragment() {
     private val viewModel: FinishedViewModel by viewModels()
@@ -29,6 +24,7 @@ class FinishedFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var recyclerViewDelegate: RecyclerViewDelegate<ListAdapter<ListEventsItem, *>>
+    private lateinit var errorPageNavigator: ErrorFragmentNavigator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +34,7 @@ class FinishedFragment : Fragment() {
         _binding = FragmentFinishedBinding.inflate(inflater, container, false)
 
         createRecyclerViewDelegate()
+        errorPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentContainer)
 
         return binding.root
     }
@@ -48,7 +45,7 @@ class FinishedFragment : Fragment() {
         recyclerViewDelegate.setup()
 
         binding.searchButton.setOnClickListener {
-            searchEvents(binding.edReview.text.toString())
+            searchEvents(binding.tfSearch.text.toString())
             val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
@@ -68,7 +65,7 @@ class FinishedFragment : Fragment() {
         }
 
         viewModel.errorState.error.observe(viewLifecycleOwner) {
-            showError(it.first, it.second)
+            errorPageNavigator.showError(it.first, it.second)
         }
 
         viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
@@ -77,7 +74,7 @@ class FinishedFragment : Fragment() {
     }
 
     private fun initializeEvents() {
-        viewModel.getEvents("")
+        viewModel.initiateEvents()
     }
 
     private fun createRecyclerViewDelegate() {
@@ -93,35 +90,6 @@ class FinishedFragment : Fragment() {
 
     private fun searchEvents(query: String) {
         viewModel.getEvents(query)
-    }
-
-    private fun showError(isVisible: Boolean = true, message: String = "") {
-        val visibility = if (isVisible) View.VISIBLE else View.GONE
-        binding.errorFragmentContainer.visibility = visibility
-
-        if (isVisible) {
-            // Check if the ErrorFragment is already added
-            var errorFragment = parentFragmentManager.findFragmentById(R.id.errorFragmentContainer) as? ErrorFragment
-            if (errorFragment == null) {
-                // If not, create and add it with the error message
-                errorFragment = ErrorFragment.newInstance(message)
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.errorFragmentContainer, errorFragment)
-                    .commit()
-            } else {
-                // If it's already added, just update the message
-                errorFragment.updateErrorMessage(message)
-            }
-        }
-    }
-
-    private fun removeErrorFragment() {
-        val errorFragment = parentFragmentManager.findFragmentById(R.id.errorFragmentContainer) as? ErrorFragment
-        if (errorFragment != null) {
-            parentFragmentManager.beginTransaction()
-                .remove(errorFragment)
-                .commit()
-        }
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -158,10 +126,11 @@ class FinishedFragment : Fragment() {
     override fun onPause() {
         super.onPause()
 
+        viewModel.onChange()
+
         val position = recyclerViewDelegate.getPosition()
         viewModel.scrollState.savePosition(position.first, position.second)
 
-        binding.edReview.text?.clear()
-        removeErrorFragment()
+        errorPageNavigator.removeErrorFragment()
     }
 }

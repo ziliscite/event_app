@@ -8,12 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.example.aplikasi_dicoding_event_first.EventsGridAdapter
-import com.example.aplikasi_dicoding_event_first.EventsListAdapter
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentUpcomingBinding
+import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
 
 class UpcomingFragment : Fragment() {
@@ -23,6 +22,7 @@ class UpcomingFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var recyclerViewDelegate: RecyclerViewDelegate<ListAdapter<ListEventsItem, *>>
+    private lateinit var errorPageNavigator: ErrorFragmentNavigator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +32,7 @@ class UpcomingFragment : Fragment() {
         _binding = FragmentUpcomingBinding.inflate(inflater, container, false)
 
         createRecyclerViewDelegate()
+        errorPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentContainer)
 
         return binding.root
     }
@@ -41,7 +42,7 @@ class UpcomingFragment : Fragment() {
 
         recyclerViewDelegate.setup()
 
-        viewModel.getEvents()
+        initializeEvents()
 
         viewModel.events.observe(viewLifecycleOwner) {
             recyclerViewDelegate.update(it)
@@ -49,6 +50,10 @@ class UpcomingFragment : Fragment() {
             viewModel.scrollState.position.observe(viewLifecycleOwner) { pos ->
                 recyclerViewDelegate.setPosition(pos.first, pos.second)
             }
+        }
+
+        viewModel.errorState.error.observe(viewLifecycleOwner) {
+            errorPageNavigator.showError(it.first, it.second)
         }
 
         viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
@@ -67,8 +72,34 @@ class UpcomingFragment : Fragment() {
         )
     }
 
+    private fun initializeEvents() {
+        viewModel.getEvents()
+    }
+
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            hideUI()
+        } else {
+            binding.progressBar.visibility = View.GONE
+            showUI()
+        }
+    }
+
+    private fun hideUI() {
+        if (viewModel.errorState.error.value?.first != true) {
+            binding.rvEvents.visibility = View.GONE
+        } else {
+            binding.errorFragmentContainer.visibility = View.GONE
+        }
+    }
+
+    private fun showUI() {
+        if (viewModel.errorState.error.value?.first != true) {
+            binding.rvEvents.visibility = View.VISIBLE
+        } else {
+            binding.errorFragmentContainer.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {
@@ -80,5 +111,7 @@ class UpcomingFragment : Fragment() {
         super.onPause()
         val position = recyclerViewDelegate.getPosition()
         viewModel.scrollState.savePosition(position.first, position.second)
+
+        errorPageNavigator.removeErrorFragment()
     }
 }

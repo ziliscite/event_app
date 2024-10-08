@@ -22,5 +22,7 @@
     <string name="emoji">o(TヘTo)</string>
     <string name="placeholder">Text Placeholder</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="start">Mulai:</string>
+    <string name="done">Selesai:</string>
+    <string name="quota">Sisa Quota:</string>
 </resources>

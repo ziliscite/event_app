@@ -23,15 +23,14 @@ class UpcomingViewModel : ViewModel() {
 
     val errorState: ErrorPageDelegate = ErrorPageDelegate()
 
-    fun getEvents(query: String = "") { viewModelScope.launch {
-        if (!_events.value.isNullOrEmpty()) {
-            loadingState.setLoading(false)
+    fun getEvents() { viewModelScope.launch {
+        // Since this fragment doesn't implement search feature...
+        if (!_events.value.isNullOrEmpty() && errorState.error.value?.first == false) {
             return@launch
         }
 
-        // Less repetitions? Idk, just trying my best
         loadingState.wrapRequest {
-            val response = eventsFetcher.fetchEvents(1, search = query, logTag = TAG)
+            val response = eventsFetcher.fetchEvents(1, logTag = TAG)
             eventsHandler.getEventsHandler(response, errorState) {
                 _events.value = it
             }

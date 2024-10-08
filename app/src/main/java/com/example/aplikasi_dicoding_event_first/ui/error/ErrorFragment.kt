@@ -11,6 +11,8 @@ class ErrorFragment : Fragment() {
     private var _binding: FragmentErrorBinding? = null
     private val binding get() = _binding!!
 
+    // I don't think I'll need viewmodel for this fragment, since no data state is needed to be observed
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,7 +37,7 @@ class ErrorFragment : Fragment() {
     }
 
     companion object {
-        // Use this method to create a new instance of ErrorFragment with an error message
+        // Create a new instance of ErrorFragment with an error message
         fun newInstance(message: String): ErrorFragment {
             val fragment = ErrorFragment()
             val args = Bundle()

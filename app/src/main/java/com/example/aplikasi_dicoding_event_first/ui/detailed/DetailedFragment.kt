@@ -13,12 +13,14 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.aplikasi_dicoding_event_first.data.response.Event
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentDetailedBinding
+import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 
 class DetailedFragment : Fragment() {
     private var _binding: FragmentDetailedBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: DetailedViewModel
+    private lateinit var errorPageNavigator: ErrorFragmentNavigator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,6 +28,8 @@ class DetailedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailedBinding.inflate(inflater, container, false)
+
+        errorPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentContainer)
         return binding.root
     }
 
@@ -39,10 +43,6 @@ class DetailedFragment : Fragment() {
         viewModel.getEvent()
 
         initializeNavigation()
-
-        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
     }
 
     override fun setMenuVisibility(menuVisible: Boolean) {
@@ -68,13 +68,6 @@ class DetailedFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // Show the the ActionBar again when we go back
-        manageActionBar(false)
-        _binding = null
-    }
-
     private fun initializeViewModel(eventId: Int) {
         val viewModelFactory = DetailedViewModelFactory(eventId)
         viewModel = ViewModelProvider(this, viewModelFactory)[DetailedViewModel::class.java]
@@ -82,15 +75,85 @@ class DetailedFragment : Fragment() {
         viewModel.event.observe(viewLifecycleOwner) {
             setLayout(it)
         }
+
+        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
+        }
+
+        viewModel.errorState.error.observe(viewLifecycleOwner) {
+            errorPageNavigator.showError(it.first, it.second)
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            hideUI()
+        } else {
+            binding.progressBar.visibility = View.GONE
+            showUI()
+        }
+    }
+
+    private fun hideUI() {
+        if (viewModel.errorState.error.value?.first != true) {
+            visibilityUI(false)
+        } else {
+            binding.errorFragmentContainer.visibility = View.GONE
+        }
+    }
+
+    private fun showUI() {
+        if (viewModel.errorState.error.value?.first != true) {
+            visibilityUI(true)
+        } else {
+            binding.errorFragmentContainer.visibility = View.VISIBLE
+        }
+    }
+
+    private fun visibilityUI(isVisible: Boolean) {
+        val visibility = if (isVisible) View.VISIBLE else View.GONE
+
+        binding.textView3.visibility = visibility
+        binding.textView4.visibility = visibility
+        binding.textView5.visibility = visibility
+        binding.ivDetailEvent.visibility = visibility
+        binding.tvEventTitle.visibility = visibility
+        binding.tvOwnerName.visibility = visibility
+        binding.tvDescriptions.visibility = visibility
+        binding.tvBeginTime.visibility = visibility
+        binding.tvEndTime.visibility = visibility
+        binding.tvQuota.visibility = visibility
     }
 
     private fun setLayout(event: Event) {
         Glide.with(requireContext())
             .load(event.imageLogo)
             .into(binding.ivDetailEvent)
+
+        binding.tvEventTitle.text = event.name
+        binding.tvOwnerName.text = event.ownerName
+        binding.tvDescriptions.text = event.description
+        binding.tvBeginTime.text = event.beginTime
+        binding.tvEndTime.text = event.endTime
+
+        val quota = event.quota
+        val registrants = event.registrants
+
+        "${quota - registrants}".also {
+            binding.tvQuota.text = it
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        errorPageNavigator.removeErrorFragment()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Show the the ActionBar again when we go back
+        manageActionBar(false)
+        _binding = null
     }
 }

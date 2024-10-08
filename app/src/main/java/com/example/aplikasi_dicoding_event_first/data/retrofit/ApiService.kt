@@ -22,5 +22,5 @@ interface ApiService {
     suspend fun getEventDetail(
         // Id is required, not optional
         @Path("id") id: Int
-    ): EventsDetailResponse
+    ): Response<EventsDetailResponse>
 }
