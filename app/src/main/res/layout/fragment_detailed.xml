@@ -86,7 +86,7 @@
             android:id="@+id/tvBeginTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:text="@string/placeholder"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/textView3"
@@ -146,6 +146,16 @@
             app:layout_constraintStart_toEndOf="@+id/textView5"
             app:layout_constraintTop_toTopOf="@+id/textView5" />
 
+        <Button
+            android:id="@+id/btnVisitLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ke_acara"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.851"
+            app:layout_constraintStart_toEndOf="@+id/tvQuota"
+            app:layout_constraintTop_toTopOf="@+id/tvQuota" />
+
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
@@ -159,13 +169,12 @@
             android:id="@+id/tvDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="@string/placeholder"
+            android:layout_marginTop="8dp"
             android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@+id/btnVisitLink"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
+            tools:layout_editor_absoluteY="504dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

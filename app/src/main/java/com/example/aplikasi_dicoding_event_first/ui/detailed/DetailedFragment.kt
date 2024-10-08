@@ -1,5 +1,7 @@
 package com.example.aplikasi_dicoding_event_first.ui.detailed
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -117,6 +119,7 @@ class DetailedFragment : Fragment() {
         binding.textView3.visibility = visibility
         binding.textView4.visibility = visibility
         binding.textView5.visibility = visibility
+        binding.btnVisitLink.visibility = visibility
         binding.ivDetailEvent.visibility = visibility
         binding.tvEventTitle.visibility = visibility
         binding.tvOwnerName.visibility = visibility
@@ -130,6 +133,12 @@ class DetailedFragment : Fragment() {
         Glide.with(requireContext())
             .load(event.imageLogo)
             .into(binding.ivDetailEvent)
+
+        binding.btnVisitLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(event.link)
+            startActivity(intent)
+        }
 
         binding.tvEventTitle.text = event.name
         binding.tvOwnerName.text = event.ownerName

@@ -44,20 +44,20 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getUpcomingEvents()
         viewModel.getFinishedEvents()
+        viewModel.getUpcomingEvents()
 
         initializeAdapters()
         initializeViewModel()
     }
 
     private fun initializeViewModel(){
-        viewModel.upcomingEvents.observe(viewLifecycleOwner) {
-            updateUpcoming(it)
-        }
-
         viewModel.finishedEvents.observe(viewLifecycleOwner) {
             updateFinished(it)
+        }
+
+        viewModel.upcomingEvents.observe(viewLifecycleOwner) {
+            updateUpcoming(it)
         }
 
         viewModel.finishedErrorState.error.observe(viewLifecycleOwner) {

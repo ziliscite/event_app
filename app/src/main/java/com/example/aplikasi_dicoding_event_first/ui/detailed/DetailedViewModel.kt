@@ -24,7 +24,7 @@ class DetailedViewModel(
     val errorState: ErrorPageDelegate = ErrorPageDelegate()
 
     fun getEvent() { viewModelScope.launch {
-        if (_event.value != null) {
+        if (_event.value != null && errorState.error.value?.first == false) {
             return@launch
         }
 

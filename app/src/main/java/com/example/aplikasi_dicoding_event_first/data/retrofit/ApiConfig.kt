@@ -1,5 +1,6 @@
 package com.example.aplikasi_dicoding_event_first.data.retrofit
 
+import com.example.aplikasi_dicoding_event_first.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -9,9 +10,11 @@ import java.util.concurrent.TimeUnit
 // Since there is no state, I figured its okay to just make it a singleton
 object ApiConfig {
     fun getApiService(): ApiService {
-        // TODO("Delete Logging After The Project Is Done")
-        val loggingInterceptor = HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+        val loggingInterceptor = if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        } else {
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
+        }
 
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)

@@ -25,4 +25,6 @@
     <string name="start">Mulai:</string>
     <string name="done">Selesai:</string>
     <string name="quota">Sisa Quota:</string>
+    <string name="search2">Search...</string>
+    <string name="ke_acara">ke acara</string>
 </resources>
