@@ -17,6 +17,7 @@ object EventsFetcher {
         limit: Int? = null,
         logTag: String
     ): Result<EventsResponse?> {
+        // Not using call because it does not work with my loading state
         return withContext(Dispatchers.IO) {
             try {
                 val response = ApiConfig
@@ -50,27 +51,7 @@ object EventsFetcher {
                     .getEventDetail(id)
 
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-
-                    // Clean the description's data of html tag
-                    val cleanedDescription = responseBody?.event?.description?.let {
-                        Jsoup.parse(it)
-                    }
-
-                    // Replace by \n
-                    cleanedDescription?.select("p")?.append("\\n")
-                    cleanedDescription?.select("br")?.append("\\n")
-
-                    val cleanedEvent = cleanedDescription?.let {
-                        responseBody.event.copy(description = it.text().replace("\\n", "\n"))
-                    }
-
-                    val cleanedResponse = cleanedEvent?.let {
-                        responseBody.copy(event = it)
-                    }
-
-                    // Immutability, eh? Complicated ain't it
-                    Result.success(cleanedResponse)
+                    Result.success(response.body())
                 } else {
                     Result.failure(Exception("${response.code()} ${response.message()}"))
                 }

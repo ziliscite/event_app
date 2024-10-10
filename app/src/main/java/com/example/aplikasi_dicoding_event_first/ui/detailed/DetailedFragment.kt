@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -78,12 +79,15 @@ class DetailedFragment : Fragment() {
             setLayout(it)
         }
 
-        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-
         viewModel.errorState.error.observe(viewLifecycleOwner) {
             errorPageNavigator.showError(it.first, it.second)
+            if (it.first) {
+                visibilityUI(false)
+            }
+        }
+
+        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
         }
     }
 
@@ -116,41 +120,47 @@ class DetailedFragment : Fragment() {
     private fun visibilityUI(isVisible: Boolean) {
         val visibility = if (isVisible) View.VISIBLE else View.GONE
 
-        binding.textView3.visibility = visibility
-        binding.textView4.visibility = visibility
-        binding.textView5.visibility = visibility
-        binding.btnVisitLink.visibility = visibility
-        binding.ivDetailEvent.visibility = visibility
-        binding.tvEventTitle.visibility = visibility
-        binding.tvOwnerName.visibility = visibility
-        binding.tvDescriptions.visibility = visibility
-        binding.tvBeginTime.visibility = visibility
-        binding.tvEndTime.visibility = visibility
-        binding.tvQuota.visibility = visibility
+        binding.let {
+            it.textView3.visibility = visibility
+            it.textView4.visibility = visibility
+            it.textView5.visibility = visibility
+            it.btnVisitLink.visibility = visibility
+            it.ivDetailEvent.visibility = visibility
+            it.tvEventTitle.visibility = visibility
+            it.tvOwnerName.visibility = visibility
+            it.tvDescriptions.visibility = visibility
+            it.tvBeginTime.visibility = visibility
+            it.tvEndTime.visibility = visibility
+            it.tvQuota.visibility = visibility
+        }
     }
 
     private fun setLayout(event: Event) {
-        Glide.with(requireContext())
-            .load(event.imageLogo)
-            .into(binding.ivDetailEvent)
-
-        binding.btnVisitLink.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(event.link)
-            startActivity(intent)
-        }
-
-        binding.tvEventTitle.text = event.name
-        binding.tvOwnerName.text = event.ownerName
-        binding.tvDescriptions.text = event.description
-        binding.tvBeginTime.text = event.beginTime
-        binding.tvEndTime.text = event.endTime
-
         val quota = event.quota
         val registrants = event.registrants
+        binding.apply {
+            btnVisitLink.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(event.link)
+                startActivity(intent)
+            }
 
-        "${quota - registrants}".also {
-            binding.tvQuota.text = it
+            Glide.with(requireContext())
+                .load(event.imageLogo)
+                .into(ivDetailEvent)
+
+            tvEventTitle.text = event.name
+            tvOwnerName.text = event.ownerName
+            tvDescriptions.text = HtmlCompat.fromHtml(
+                event.description,
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            tvBeginTime.text = event.beginTime
+            tvEndTime.text = event.endTime
+
+            "${quota - registrants}".also {
+                binding.tvQuota.text = it
+            }
         }
     }
 

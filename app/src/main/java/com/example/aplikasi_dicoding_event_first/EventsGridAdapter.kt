@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.EventCardBinding
 
+// I.. am not sure where to put adapter at, so, it stays in the root for now
 class EventsGridAdapter(
     private val onClick: (Int) -> Unit
 ) : ListAdapter<ListEventsItem, EventsGridAdapter.MyViewHolder>(DIFF_CALLBACK) {

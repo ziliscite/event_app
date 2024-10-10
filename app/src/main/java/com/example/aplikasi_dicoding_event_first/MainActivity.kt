@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
 
         val navView: BottomNavigationView = binding.navView
 
-        // Retrieve NavController through NavHostFragment
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
 
@@ -41,9 +40,10 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.detailedFragment) {
                 // Slide the bottom nav out to the left with the fragment transition
+                // (matching the rest of the view's navigation)
                 navView.animate()
                     .translationX(-navView.width.toFloat())  // Moves it to the left
-                    .setDuration(75)
+                    .setDuration(75) // Can't use the duration in the integer package, so hard coded it is
                     .setInterpolator(AccelerateDecelerateInterpolator())
                     .withEndAction {
                         navView.visibility = View.GONE  // Set it to gone after the animation
@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Pop pop
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.nav_host_fragment_activity_main).navigateUp() || super.onSupportNavigateUp()
     }

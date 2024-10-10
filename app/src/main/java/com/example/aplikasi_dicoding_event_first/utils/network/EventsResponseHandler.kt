@@ -9,6 +9,7 @@ import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorPageDelegate
 object EventsResponseHandler {
     private const val NORESULTERR = "Oops, no results found!"
 
+    // Eah, doing this 4 times is quite a lot of repetitions, so, delegate it is
     fun getEventsHandler(response: Result<EventsResponse?>, errorState: ErrorPageDelegate, callback: (List<ListEventsItem>) -> Unit) {
         if (response.isSuccess) {
             response.getOrNull()?.listEvents?.let {
@@ -22,6 +23,8 @@ object EventsResponseHandler {
             }
         } else {
             response.exceptionOrNull()?.let {
+                // Kinda to reset the viewmodel data so that.. uh.. I forgot, but it has something to do
+                // with the error fragment overlapping
                 callback(emptyList())
                 errorState.setError(true, it.message.orEmpty())
             }?: run {

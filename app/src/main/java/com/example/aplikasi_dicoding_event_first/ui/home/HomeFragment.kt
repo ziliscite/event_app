@@ -44,11 +44,11 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getFinishedEvents()
-        viewModel.getUpcomingEvents()
-
         initializeAdapters()
         initializeViewModel()
+
+        viewModel.getFinishedEvents()
+        viewModel.getUpcomingEvents()
     }
 
     private fun initializeViewModel(){
@@ -147,13 +147,15 @@ class HomeFragment : Fragment() {
             findNavController().navigate(toEventDetail)
         }
 
-        binding.rvUpcomingEvents.layoutManager = upcomingLayoutManager
-        binding.rvUpcomingEvents.adapter = upcomingAdapter
-        binding.rvUpcomingEvents.setHasFixedSize(true)
+        binding.apply {
+            rvUpcomingEvents.layoutManager = upcomingLayoutManager
+            rvUpcomingEvents.adapter = upcomingAdapter
+            rvUpcomingEvents.setHasFixedSize(true)
 
-        binding.rvFinishedEvents.layoutManager = finishedLayoutManager
-        binding.rvFinishedEvents.adapter = finishedAdapter
-        binding.rvFinishedEvents.setHasFixedSize(true)
+            rvFinishedEvents.layoutManager = finishedLayoutManager
+            rvFinishedEvents.adapter = finishedAdapter
+            rvFinishedEvents.setHasFixedSize(true)
+        }
     }
 
     override fun onDestroyView() {

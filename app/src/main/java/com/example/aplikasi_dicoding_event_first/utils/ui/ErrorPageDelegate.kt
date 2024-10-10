@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 
+// Similar to scrollStateDelegate
 class ErrorPageDelegate {
     private val _isError = MutableLiveData<Boolean>()
     private val _message = MutableLiveData<String>()

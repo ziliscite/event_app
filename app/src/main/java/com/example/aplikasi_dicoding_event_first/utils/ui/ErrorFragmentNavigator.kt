@@ -29,6 +29,8 @@ class ErrorFragmentNavigator(
         }
     }
 
+    // Remove fragment if not error / navigate to other fragment.
+    // If not removed, it will either somehow crash the app or the error fragment won't show up again
     fun removeErrorFragment() {
         val errorFragment = fragmentManager.findFragmentById(fragmentContainerView.id) as? ErrorFragment
         errorFragment?.let {
