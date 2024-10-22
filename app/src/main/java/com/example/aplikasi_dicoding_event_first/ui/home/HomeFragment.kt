@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aplikasi_dicoding_event_first.EventsGridAdapter
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
-import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
+import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentHomeBinding
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorPageDelegate

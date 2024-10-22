@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.example.aplikasi_dicoding_event_first.data.response.Event
+import com.example.aplikasi_dicoding_event_first.data.remote.response.Event
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentDetailedBinding
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 

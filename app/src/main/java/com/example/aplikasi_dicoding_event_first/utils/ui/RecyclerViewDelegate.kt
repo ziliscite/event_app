@@ -3,7 +3,7 @@ package com.example.aplikasi_dicoding_event_first.utils.ui
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
+import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 
 // Delegating recyclerview and its adapter
 class RecyclerViewDelegate <in T: ListAdapter<ListEventsItem, *>> (

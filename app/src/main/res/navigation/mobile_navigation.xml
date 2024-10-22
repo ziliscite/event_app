@@ -56,4 +56,24 @@
             app:popEnterAnim="@anim/fragment_pop_in"
             app:popExitAnim="@anim/fragment_pop_out" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_favorite"
+        android:name="com.example.aplikasi_dicoding_event_first.ui.favorite.FavoriteFragment"
+        android:label="@string/appbar_favorite"
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_detailedFragment"
+            app:destination="@id/detailedFragment"
+            app:enterAnim="@anim/fragment_in"
+            app:exitAnim="@anim/fragment_out"
+            app:popEnterAnim="@anim/fragment_pop_in"
+            app:popExitAnim="@anim/fragment_pop_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_setting"
+        android:name="com.example.aplikasi_dicoding_event_first.ui.settings.SettingsFragment"
+        android:label="@string/appbar_setting"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

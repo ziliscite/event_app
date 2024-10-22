@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
-import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
+import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentFinishedBinding
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate

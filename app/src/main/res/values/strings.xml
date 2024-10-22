@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">Aplikasi Dicoding Event</string>
 
+    <string name="title_favorite">Favorite</string>
+    <string name="title_setting">Settings</string>
     <string name="title_home">Home</string>
     <string name="title_upcoming">Upcoming</string>
     <string name="title_finished">Finished</string>
 
+    <string name="appbar_favorite">Favorite Events</string>
+    <string name="appbar_setting">Settings</string>
     <string name="appbar_home">Dicoding Events</string>
     <string name="appbar_upcoming">Upcoming Events</string>
     <string name="appbar_finished">Finished Events</string>
@@ -27,4 +31,9 @@
     <string name="quota">Sisa Quota:</string>
     <string name="search2">Search…</string>
     <string name="ke_acara">ke acara</string>
+
+    <string name="dark_mode_description">Enable Dark Mode</string>
+    <string name="title_daily_reminder">Daily Reminder</string>
+    <string name="daily_reminder_description">Enable Notification; will appear every day at 9 AM</string>
+    <string name="title_dark_mode">Dark Mode</string>
 </resources>

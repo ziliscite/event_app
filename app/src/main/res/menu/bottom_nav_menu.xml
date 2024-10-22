@@ -21,6 +21,18 @@
             android:icon="@drawable/baseline_developer_board_off_24"
             android:title="@string/title_finished"
             android:enabled="true"/>
+
+        <item
+            android:id="@+id/navigation_favorite"
+            android:icon="@drawable/baseline_favorite_24"
+            android:title="@string/title_favorite"
+            android:enabled="true"/>
+
+        <item
+            android:id="@+id/navigation_setting"
+            android:icon="@drawable/baseline_settings_24"
+            android:title="@string/title_setting"
+            android:enabled="true"/>
     </group>
 
 </menu>

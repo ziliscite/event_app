@@ -1,9 +1,9 @@
 package com.example.aplikasi_dicoding_event_first.utils.network
 
 import android.util.Log
-import com.example.aplikasi_dicoding_event_first.data.retrofit.ApiConfig
-import com.example.aplikasi_dicoding_event_first.data.response.EventsDetailResponse
-import com.example.aplikasi_dicoding_event_first.data.response.EventsResponse
+import com.example.aplikasi_dicoding_event_first.data.remote.retrofit.ApiConfig
+import com.example.aplikasi_dicoding_event_first.data.remote.response.EventsDetailResponse
+import com.example.aplikasi_dicoding_event_first.data.remote.response.EventsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup

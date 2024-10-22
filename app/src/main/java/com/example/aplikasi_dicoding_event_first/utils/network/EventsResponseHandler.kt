@@ -1,9 +1,9 @@
 package com.example.aplikasi_dicoding_event_first.utils.network
 
-import com.example.aplikasi_dicoding_event_first.data.response.Event
-import com.example.aplikasi_dicoding_event_first.data.response.EventsDetailResponse
-import com.example.aplikasi_dicoding_event_first.data.response.EventsResponse
-import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
+import com.example.aplikasi_dicoding_event_first.data.remote.response.Event
+import com.example.aplikasi_dicoding_event_first.data.remote.response.EventsDetailResponse
+import com.example.aplikasi_dicoding_event_first.data.remote.response.EventsResponse
+import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorPageDelegate
 
 object EventsResponseHandler {

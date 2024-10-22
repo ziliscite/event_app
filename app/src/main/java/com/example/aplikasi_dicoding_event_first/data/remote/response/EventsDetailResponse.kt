@@ -1,19 +1,19 @@
-package com.example.aplikasi_dicoding_event_first.data.response
+package com.example.aplikasi_dicoding_event_first.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 
-data class EventsResponse(
-	@field:SerializedName("listEvents")
-	val listEvents: List<ListEventsItem>,
-
+data class EventsDetailResponse(
 	@field:SerializedName("error")
 	val error: Boolean,
 
 	@field:SerializedName("message")
-	val message: String
+	val message: String,
+
+	@field:SerializedName("event")
+	val event: Event
 )
 
-data class ListEventsItem(
+data class Event(
 	@field:SerializedName("summary")
 	val summary: String,
 

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.aplikasi_dicoding_event_first.data.response.ListEventsItem
+import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.EventCardBinding
 
 // I.. am not sure where to put adapter at, so, it stays in the root for now
