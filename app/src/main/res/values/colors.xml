@@ -142,4 +142,5 @@
     <color name="md_theme_surfaceContainerHighest_highContrast" tools:keep="@color/md_theme_surfaceContainerHighest_highContrast">#E2E3D8</color>
 
     <color name="lowkey_card" tools:keep="@color/lowkey_card">#E9E2D0</color>
+    <color name="placeholder">#6FB6B6B6</color>
 </resources>

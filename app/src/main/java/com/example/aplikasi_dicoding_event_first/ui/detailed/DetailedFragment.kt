@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.aplikasi_dicoding_event_first.R
 import com.example.aplikasi_dicoding_event_first.data.remote.response.Event
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentDetailedBinding
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
@@ -121,6 +123,7 @@ class DetailedFragment : Fragment() {
         val visibility = if (isVisible) View.VISIBLE else View.GONE
 
         binding.let {
+            it.fabFavorite.visibility = visibility
             it.textView3.visibility = visibility
             it.textView4.visibility = visibility
             it.textView5.visibility = visibility
@@ -147,6 +150,8 @@ class DetailedFragment : Fragment() {
 
             Glide.with(requireContext())
                 .load(event.imageLogo)
+                .apply(RequestOptions.placeholderOf(R.drawable.ic_loading)
+                .error(R.drawable.baseline_broken_image_24))
                 .into(ivDetailEvent)
 
             tvEventTitle.text = event.name

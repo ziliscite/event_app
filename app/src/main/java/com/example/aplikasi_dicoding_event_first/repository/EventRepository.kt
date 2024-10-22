@@ -41,8 +41,7 @@ class EventRepository(
                     registrants = it.registrants,
                     quota = it.quota,
                     beginTime = it.beginTime,
-                    endTime = it.endTime,
-                    isFavorite = isFavorite
+                    endTime = it.endTime
                 )
             }
 
@@ -75,8 +74,7 @@ class EventRepository(
                     registrants = it.registrants,
                     quota = it.quota,
                     beginTime = it.beginTime,
-                    endTime = it.endTime,
-                    isFavorite = isFavorite
+                    endTime = it.endTime
                 )
             }
             emit(EventResult.Success(event))

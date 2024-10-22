@@ -49,6 +49,6 @@ class FavoriteEventEntity(
     @field:ColumnInfo("endTime")
     val endTime: String,
 
-    @field:ColumnInfo(name = "isFavorite")
-    var isFavorite: Boolean,
+//    @field:ColumnInfo(name = "isFavorite")
+//    var isFavorite: Boolean,
 )

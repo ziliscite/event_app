@@ -35,14 +35,12 @@ class FavoriteEventRepository(
     suspend fun insertFavoriteEvent(
         event: FavoriteEventEntity
     ) {
-        event.isFavorite = true
         favoriteEventDao.insertFavoriteEvent(event)
     }
 
     suspend fun deleteFavoriteEvent(
         event: FavoriteEventEntity
     ) {
-        event.isFavorite = false
         favoriteEventDao.deleteFavoriteEvent(event.eventId)
     }
 
