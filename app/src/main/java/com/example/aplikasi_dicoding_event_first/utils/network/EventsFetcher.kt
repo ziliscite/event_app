@@ -30,7 +30,7 @@ object EventsFetcher {
                     Result.failure(Exception("${response.code()} ${response.message()}"))
                 }
 
-            } catch (e: IOException) { // When fetching data too long / no internet connection
+            } catch (e: IOException) {
                 Log.e(logTag, "onFailure: ${e.message}")
                 Result.failure(Exception("Internet connection problem"))
             } catch (e: Exception) {

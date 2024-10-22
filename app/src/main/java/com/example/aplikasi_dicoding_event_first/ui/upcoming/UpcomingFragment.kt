@@ -12,11 +12,14 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.aplikasi_dicoding_event_first.EventsGridAdapter
 import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentUpcomingBinding
+import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
 
 class UpcomingFragment : Fragment() {
-    private val viewModel: UpcomingViewModel by viewModels()
+    private val viewModel: UpcomingViewModel by viewModels<UpcomingViewModel>{
+        UpcomingViewModelFactory.getInstance()
+    }
 
     private var _binding: FragmentUpcomingBinding? = null
     private val binding get() = _binding!!
@@ -44,20 +47,29 @@ class UpcomingFragment : Fragment() {
 
         initializeEvents()
 
-        viewModel.events.observe(viewLifecycleOwner) {
-            recyclerViewDelegate.update(it)
-
-            viewModel.scrollState.position.observe(viewLifecycleOwner) { pos ->
-                recyclerViewDelegate.setPosition(pos.first, pos.second)
-            }
-        }
-
+        setLatestUpcomingViewModel()
         viewModel.errorState.error.observe(viewLifecycleOwner) {
             errorPageNavigator.showError(it.first, it.second)
         }
+    }
 
-        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
-            showLoading(it)
+    private fun setLatestUpcomingViewModel() {
+        viewModel.upcomingEvents.observe(viewLifecycleOwner) {
+            when(it) {
+                is EventResult.Success -> {
+                    showLoading(false)
+                    recyclerViewDelegate.update(it.data)
+                }
+                is EventResult.Error -> {
+                    showLoading(false)
+                }
+                is EventResult.Loading -> {
+                    showLoading(true)
+                }
+            }
+            viewModel.scrollState.position.observe(viewLifecycleOwner) { pos ->
+                recyclerViewDelegate.setPosition(pos.first, pos.second)
+            }
         }
     }
 
@@ -73,7 +85,7 @@ class UpcomingFragment : Fragment() {
     }
 
     private fun initializeEvents() {
-        viewModel.getEvents()
+        viewModel.getUpcomingEvents()
     }
 
     private fun showLoading(isLoading: Boolean) {

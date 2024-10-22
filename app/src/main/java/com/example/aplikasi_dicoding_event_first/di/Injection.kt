@@ -6,13 +6,18 @@ import com.example.aplikasi_dicoding_event_first.data.manager.SettingsPreference
 import com.example.aplikasi_dicoding_event_first.data.manager.dataStore
 import com.example.aplikasi_dicoding_event_first.data.remote.retrofit.ApiConfig
 import com.example.aplikasi_dicoding_event_first.repository.EventRepository
+import com.example.aplikasi_dicoding_event_first.repository.FavoriteEventRepository
 
 object Injection {
-    fun provideRepository(context: Context): EventRepository {
+    fun provideRepository(): EventRepository {
         val apiService = ApiConfig.getApiServiceNew()
+        return EventRepository.getInstance(apiService)
+    }
+
+    fun provideFavoriteRepository(context: Context): FavoriteEventRepository {
         val database = EventDatabase.getInstance(context)
         val dao = database.favoriteEventDao()
-        return EventRepository.getInstance(apiService, dao)
+        return FavoriteEventRepository.getInstance(dao)
     }
 
     fun providePreferences(context: Context): SettingsPreferences {
