@@ -17,11 +17,9 @@ class SettingsPreferences private constructor(
     private val themeKey = booleanPreferencesKey("theme_setting")
     private val reminderKey = booleanPreferencesKey("reminder_setting")
 
-    fun getThemeSetting(): Flow<Boolean> {
-        return dataStore.data.map {
-            it[themeKey] ?: false
-        }
-    }
+    fun getThemeSetting(): Flow<Boolean> { return dataStore.data.map {
+        it[themeKey] ?: false
+    }}
 
     suspend fun saveThemeSetting(isDarkModeActive: Boolean) {
         dataStore.edit {
@@ -29,11 +27,9 @@ class SettingsPreferences private constructor(
         }
     }
 
-    fun getReminderSetting(): Flow<Boolean> {
-        return dataStore.data.map {
-            it[reminderKey] ?: false
-        }
-    }
+    fun getReminderSetting(): Flow<Boolean> { return dataStore.data.map {
+        it[reminderKey] ?: false
+    }}
 
     suspend fun saveReminderSetting(isReminderActive: Boolean) {
         dataStore.edit {

@@ -33,16 +33,8 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setTheme() {
-        viewModel.getThemeSettings()
-
-        viewModel.themeSetting.observe(viewLifecycleOwner) { isDarkModeActive: Boolean ->
-            if (isDarkModeActive) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                binding.switchDarkMode.isChecked = true
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                binding.switchDarkMode.isChecked = false
-            }
+        viewModel.getThemeSettings().observe(viewLifecycleOwner) { isDarkModeActive: Boolean ->
+            binding.switchDarkMode.isChecked = isDarkModeActive
         }
 
         binding.switchDarkMode.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
