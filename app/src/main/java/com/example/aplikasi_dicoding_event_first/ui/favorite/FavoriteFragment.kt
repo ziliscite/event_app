@@ -7,14 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.example.aplikasi_dicoding_event_first.EventsFavoriteAdapter
-import com.example.aplikasi_dicoding_event_first.EventsGridAdapter
-import com.example.aplikasi_dicoding_event_first.EventsListAdapter
 import com.example.aplikasi_dicoding_event_first.data.local.entity.FavoriteEventEntity
-import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentFavoriteBinding
 import com.example.aplikasi_dicoding_event_first.ui.upcoming.UpcomingFragmentDirections
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
@@ -47,6 +43,15 @@ class FavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerViewDelegate.setup()
+        viewModel.getFavoriteEvent().observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                errorPageNavigator.showError(true, "No Favorite Event")
+            } else {
+                errorPageNavigator.showError(false, "")
+            }
+
+            recyclerViewDelegate.update(it)
+        }
     }
 
     private fun createRecyclerViewDelegate() {
@@ -54,9 +59,22 @@ class FavoriteFragment : Fragment() {
             binding.rvEvents,
             LinearLayoutManager(requireContext()),
             EventsFavoriteAdapter{
-                val toEventDetail = UpcomingFragmentDirections.actionNavigationUpcomingToDetailedFragment(it)
+                val toEventDetail = FavoriteFragmentDirections.actionFavoriteFragmentToDetailedFragment(it)
                 findNavController().navigate(toEventDetail)
             }
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val position = recyclerViewDelegate.getPosition()
+        viewModel.scrollState.savePosition(position.first, position.second)
+
+        errorPageNavigator.removeErrorFragment()
     }
 }

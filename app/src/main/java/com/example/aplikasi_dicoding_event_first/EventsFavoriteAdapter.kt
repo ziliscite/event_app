@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.aplikasi_dicoding_event_first.databinding.EventCardListBinding
 import com.example.aplikasi_dicoding_event_first.utils.data.IEvent
 
+// Erm, generics because I'm just curious xD
 class EventsFavoriteAdapter<T : IEvent>(
     private val onClick: (Int) -> Unit
 ) : ListAdapter<T, EventsFavoriteAdapter.MyViewHolder<T>>(createDiffCallback()) {

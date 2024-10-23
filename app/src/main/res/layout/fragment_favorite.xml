@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.favorite.FavoriteFragment">
+    tools:context=".ui.favorite.FavoriteFragment"
+    android:layout_marginBottom="70dp">
 
     <ProgressBar
         android:id="@+id/progressBar"
