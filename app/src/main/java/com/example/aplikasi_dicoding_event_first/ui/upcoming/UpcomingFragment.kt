@@ -15,11 +15,14 @@ import com.example.aplikasi_dicoding_event_first.databinding.FragmentUpcomingBin
 import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
+import com.example.aplikasi_dicoding_event_first.utils.ui.VisibilityHandler
 
 class UpcomingFragment : Fragment() {
     private val viewModel: UpcomingViewModel by viewModels<UpcomingViewModel>{
         UpcomingViewModelFactory.getInstance()
     }
+
+    private lateinit var visibilityHandler: VisibilityHandler
 
     private var _binding: FragmentUpcomingBinding? = null
     private val binding get() = _binding!!
@@ -36,6 +39,11 @@ class UpcomingFragment : Fragment() {
 
         createRecyclerViewDelegate()
         errorPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentContainer)
+
+        visibilityHandler = VisibilityHandler(binding.progressBar, binding.errorFragmentContainer) { isVisible ->
+            val visibility = if (isVisible) View.VISIBLE else View.GONE
+            binding.rvEvents.visibility = visibility
+        }
 
         return binding.root
     }
@@ -85,29 +93,7 @@ class UpcomingFragment : Fragment() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-            hideUI()
-        } else {
-            binding.progressBar.visibility = View.GONE
-            showUI()
-        }
-    }
-
-    private fun hideUI() {
-        if (viewModel.errorState.error.value?.first != true) {
-            binding.rvEvents.visibility = View.GONE
-        } else {
-            binding.errorFragmentContainer.visibility = View.GONE
-        }
-    }
-
-    private fun showUI() {
-        if (viewModel.errorState.error.value?.first != true) {
-            binding.rvEvents.visibility = View.VISIBLE
-        } else {
-            binding.errorFragmentContainer.visibility = View.VISIBLE
-        }
+        visibilityHandler.setLoadingState(isLoading, viewModel.errorState.error.value?.first ?: false)
     }
 
     override fun onDestroyView() {

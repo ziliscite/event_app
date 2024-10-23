@@ -1,6 +1,5 @@
 package com.example.aplikasi_dicoding_event_first.ui.detailed
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -75,7 +74,6 @@ class DetailedViewModel(
             )
         }
 
-        Log.d("INSERT", "insertFavorite: $eventEntity")
         favoriteRepository.insertFavoriteEvent(eventEntity)
     }}
 
