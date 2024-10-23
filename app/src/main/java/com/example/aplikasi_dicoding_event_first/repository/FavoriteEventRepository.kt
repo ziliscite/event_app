@@ -17,31 +17,18 @@ class FavoriteEventRepository(
 
     fun getFavoriteEventDetail(
         eventId: Int
-    ): LiveData<EventResult<FavoriteEventEntity>> = liveData {
-        emit(EventResult.Loading)
-        try {
-            val event = favoriteEventDao.getFavoriteEventById(eventId)
-            val localData: LiveData<EventResult<FavoriteEventEntity>> = event.map {
-                EventResult.Success(it)
-            }
-            emitSource(localData)
-        } catch (e: Exception) {
-            Log.d("EventRepository", "getEventDetail: ${e.message.toString()} ")
-            emit(EventResult.Error(e.message.toString()))
-        }
-        emit(EventResult.Error("Unforeseen Error"))
+    ): LiveData<FavoriteEventEntity> {
+        return favoriteEventDao.getFavoriteEventById(eventId)
     }
 
-    suspend fun insertFavoriteEvent(
-        event: FavoriteEventEntity
-    ) {
+    suspend fun insertFavoriteEvent(event: FavoriteEventEntity) {
+//        Log.d("EventRepository", "getEventDetail: ${event.name} ")
         favoriteEventDao.insertFavoriteEvent(event)
     }
 
-    suspend fun deleteFavoriteEvent(
-        event: FavoriteEventEntity
-    ) {
-        favoriteEventDao.deleteFavoriteEvent(event.eventId)
+    suspend fun deleteFavoriteEvent(eventId: Int) {
+//        Log.d("EventRepository", "getEventDetail: $eventId ")
+        favoriteEventDao.deleteFavoriteEvent(eventId)
     }
 
     companion object {

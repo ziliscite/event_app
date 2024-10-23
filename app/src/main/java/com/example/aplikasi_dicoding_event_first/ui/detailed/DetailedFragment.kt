@@ -18,6 +18,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.aplikasi_dicoding_event_first.R
 import com.example.aplikasi_dicoding_event_first.data.remote.response.Event
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentDetailedBinding
+import com.example.aplikasi_dicoding_event_first.utils.data.FavoriteEventDetailDTO
+import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 
 class DetailedFragment : Fragment() {
@@ -41,13 +43,56 @@ class DetailedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Getting the id passed from both upcoming & finished fragments (soon, home too)
         val args: DetailedFragmentArgs by navArgs()
-        initializeViewModel(args.id)
 
-        viewModel.getEvent()
+        initializeViewModel()
+        initializeEventDetail(args.id)
 
         initializeNavigation()
+    }
+
+    private fun initializeEventDetail(eventId: Int) {
+        viewModel.getEventDetailFavorite(eventId).observe(viewLifecycleOwner) {
+            if(it != null) {
+                showLoading(false)
+                setLayout(
+                    it.run {
+                        Event(
+                            summary = summary,
+                            mediaCover = mediaCover,
+                            registrants = registrants,
+                            imageLogo = imageLogo,
+                            link = link,
+                            description = description,
+                            ownerName = ownerName,
+                            cityName = cityName,
+                            quota = quota,
+                            name = name,
+                            id = it.eventId,
+                            beginTime = beginTime,
+                            endTime = endTime,
+                            category = category
+                        )
+                    }, isFavorite = true
+                )
+            } else {
+                viewModel.detailEvent.observe(viewLifecycleOwner) { event ->
+                    when(event) {
+                        is EventResult.Success -> {
+                            showLoading(false)
+                            setLayout(event.data.event, event.data.isFavorite)
+                        }
+                        is EventResult.Error -> {
+                            showLoading(false)
+                        }
+                        is EventResult.Loading -> {
+                            showLoading(true)
+                        }
+                    }
+                }
+                viewModel.getEventDetail(eventId)
+            }
+        }
     }
 
     override fun setMenuVisibility(menuVisible: Boolean) {
@@ -56,40 +101,28 @@ class DetailedFragment : Fragment() {
 
     private fun manageActionBar(create: Boolean) {
         val actionBar = (activity as AppCompatActivity).supportActionBar
-        // The opposite of create = destroy. So, when fragment is created, we destroy it
         actionBar?.setDisplayShowTitleEnabled(!create)
     }
 
     private fun initializeNavigation() {
-        // Make the Activity's ActionBar disappear -- Ay, not the "Action Bar", but just the title
         manageActionBar(true)
 
-        // So that the action bar, when pressed, it will do the animation
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // Go back to backStack when the arrow or the back button is pressed
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             findNavController().popBackStack()
         }
     }
 
-    private fun initializeViewModel(eventId: Int) {
-        val viewModelFactory = DetailedViewModelFactory(eventId)
+    private fun initializeViewModel() {
+        val viewModelFactory = DetailedViewModelFactory.getInstance(requireContext())
         viewModel = ViewModelProvider(this, viewModelFactory)[DetailedViewModel::class.java]
-
-        viewModel.event.observe(viewLifecycleOwner) {
-            setLayout(it)
-        }
 
         viewModel.errorState.error.observe(viewLifecycleOwner) {
             errorPageNavigator.showError(it.first, it.second)
             if (it.first) {
                 visibilityUI(false)
             }
-        }
-
-        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
-            showLoading(it)
         }
     }
 
@@ -119,29 +152,15 @@ class DetailedFragment : Fragment() {
         }
     }
 
-    private fun visibilityUI(isVisible: Boolean) {
-        val visibility = if (isVisible) View.VISIBLE else View.GONE
-
-        binding.let {
-            it.fabFavorite.visibility = visibility
-            it.textView3.visibility = visibility
-            it.textView4.visibility = visibility
-            it.textView5.visibility = visibility
-            it.btnVisitLink.visibility = visibility
-            it.ivDetailEvent.visibility = visibility
-            it.tvEventTitle.visibility = visibility
-            it.tvOwnerName.visibility = visibility
-            it.tvDescriptions.visibility = visibility
-            it.tvBeginTime.visibility = visibility
-            it.tvEndTime.visibility = visibility
-            it.tvQuota.visibility = visibility
-        }
-    }
-
-    private fun setLayout(event: Event) {
+    private fun setLayout(event: Event, isFavorite: Boolean = false) {
         val quota = event.quota
         val registrants = event.registrants
+
         binding.apply {
+            fabFavorite.setImageResource(
+                if (isFavorite) R.drawable.baseline_favorite_24 else R.drawable.baseline_favorite_border_24
+            )
+
             btnVisitLink.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(event.link)
@@ -151,7 +170,7 @@ class DetailedFragment : Fragment() {
             Glide.with(requireContext())
                 .load(event.imageLogo)
                 .apply(RequestOptions.placeholderOf(R.drawable.ic_loading)
-                .error(R.drawable.baseline_broken_image_24))
+                    .error(R.drawable.baseline_broken_image_24))
                 .into(ivDetailEvent)
 
             tvEventTitle.text = event.name
@@ -166,6 +185,33 @@ class DetailedFragment : Fragment() {
             "${quota - registrants}".also {
                 binding.tvQuota.text = it
             }
+
+            fabFavorite.setOnClickListener {
+                if (isFavorite) {
+                    viewModel.deleteFavorite(event.id)
+                } else {
+                    viewModel.insertFavorite(event)
+                }
+            }
+        }
+    }
+
+    private fun visibilityUI(isVisible: Boolean) {
+        val visibility = if (isVisible) View.VISIBLE else View.GONE
+
+        binding.apply {
+            fabFavorite.visibility = visibility
+            btnVisitLink.visibility = visibility
+            textView3.visibility = visibility
+            textView4.visibility = visibility
+            textView5.visibility = visibility
+            ivDetailEvent.visibility = visibility
+            tvEventTitle.visibility = visibility
+            tvOwnerName.visibility = visibility
+            tvDescriptions.visibility = visibility
+            tvBeginTime.visibility = visibility
+            tvEndTime.visibility = visibility
+            tvQuota.visibility = visibility
         }
     }
 
@@ -176,7 +222,6 @@ class DetailedFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Show the the ActionBar again when we go back
         manageActionBar(false)
         _binding = null
     }
