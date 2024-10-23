@@ -39,30 +39,4 @@ object EventsFetcher {
             }
         }
     }
-
-    suspend fun fetchEventDetail(
-        id: Int,
-        logTag: String
-    ) : Result<EventsDetailResponse?> {
-        return withContext(Dispatchers.IO) {
-            try {
-                val response = ApiConfig
-                    .getApiService()
-                    .getEventDetail(id)
-
-                if (response.isSuccessful) {
-                    Result.success(response.body())
-                } else {
-                    Result.failure(Exception("${response.code()} ${response.message()}"))
-                }
-
-            } catch (e: IOException) {
-                Log.e(logTag, "onFailure: ${e.message}")
-                Result.failure(Exception("Internet connection problem"))
-            } catch (e: Exception) {
-                Log.e(logTag, "onFailure: ${e.message}")
-                Result.failure(Exception("Unexpected error!"))
-            }
-        }
-    }
 }

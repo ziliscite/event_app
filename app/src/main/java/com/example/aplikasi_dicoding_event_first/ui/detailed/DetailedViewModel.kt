@@ -58,7 +58,7 @@ class DetailedViewModel(
     fun insertFavorite(event: Event) { viewModelScope.launch {
         val eventEntity = event.run {
             FavoriteEventEntity(
-                eventId = id,
+                id = id,
                 summary = summary,
                 mediaCover = mediaCover,
                 name = name,

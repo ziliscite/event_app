@@ -41,9 +41,8 @@ object ApiConfig {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            // I'm not gonna wait minutes just to get connection error
-            .connectTimeout(15, TimeUnit.SECONDS) // Connection timeout
-            .readTimeout(15, TimeUnit.SECONDS)    // Read timeout
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()

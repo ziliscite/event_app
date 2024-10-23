@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -18,7 +18,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.aplikasi_dicoding_event_first.R
 import com.example.aplikasi_dicoding_event_first.data.remote.response.Event
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentDetailedBinding
-import com.example.aplikasi_dicoding_event_first.utils.data.FavoriteEventDetailDTO
 import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 
@@ -26,7 +25,10 @@ class DetailedFragment : Fragment() {
     private var _binding: FragmentDetailedBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: DetailedViewModel
+    private val viewModel: DetailedViewModel by viewModels<DetailedViewModel>{
+        DetailedViewModelFactory.getInstance(requireContext())
+    }
+
     private lateinit var errorPageNavigator: ErrorFragmentNavigator
 
     override fun onCreateView(
@@ -68,7 +70,7 @@ class DetailedFragment : Fragment() {
                             cityName = cityName,
                             quota = quota,
                             name = name,
-                            id = it.eventId,
+                            id = it.id,
                             beginTime = beginTime,
                             endTime = endTime,
                             category = category
@@ -115,9 +117,6 @@ class DetailedFragment : Fragment() {
     }
 
     private fun initializeViewModel() {
-        val viewModelFactory = DetailedViewModelFactory.getInstance(requireContext())
-        viewModel = ViewModelProvider(this, viewModelFactory)[DetailedViewModel::class.java]
-
         viewModel.errorState.error.observe(viewLifecycleOwner) {
             errorPageNavigator.showError(it.first, it.second)
             if (it.first) {

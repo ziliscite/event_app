@@ -7,10 +7,6 @@ class LoadingStateDelegate {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    fun setLoading(isLoading: Boolean) {
-        _isLoading.value = isLoading
-    }
-
     suspend fun wrapRequest(callback: suspend () -> Unit) {
         _isLoading.value = true
         callback()

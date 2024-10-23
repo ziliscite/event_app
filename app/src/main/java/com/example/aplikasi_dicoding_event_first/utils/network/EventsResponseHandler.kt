@@ -33,24 +33,4 @@ object EventsResponseHandler {
             }
         }
     }
-
-    fun getEventDetailHandler(response: Result<EventsDetailResponse?>, errorState: ErrorPageDelegate, callback: (Event?) -> Unit) {
-        if (response.isSuccess) {
-            response.getOrNull()?.event?.let {
-                callback(it)
-                errorState.setError(false, "")
-            }?: run {
-                callback(null)
-                errorState.setError(true, NORESULTERR)
-            }
-        } else {
-            response.exceptionOrNull()?.let {
-                callback(null)
-                errorState.setError(true, it.message.orEmpty())
-            }?: run {
-                callback(null)
-                errorState.setError(true, NORESULTERR)
-            }
-        }
-    }
 }

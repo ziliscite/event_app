@@ -4,9 +4,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
+import com.example.aplikasi_dicoding_event_first.utils.data.IEvent
 
 // Delegating recyclerview and its adapter
-class RecyclerViewDelegate <in T: ListAdapter<ListEventsItem, *>> (
+class RecyclerViewDelegate <V: IEvent, in T: ListAdapter<V, *>> (
     private val recyclerView: RecyclerView,
     private val layoutManager: RecyclerView.LayoutManager,
     private val adapter: T
@@ -16,7 +17,7 @@ class RecyclerViewDelegate <in T: ListAdapter<ListEventsItem, *>> (
         recyclerView.adapter = adapter
     }
 
-    fun update(newData: List<ListEventsItem>) {
+    fun update(newData: List<V>) {
         adapter.submitList(newData)
         recyclerView.adapter = adapter
     }

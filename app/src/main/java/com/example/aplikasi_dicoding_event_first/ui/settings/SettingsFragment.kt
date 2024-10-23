@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentSettingsBinding
 

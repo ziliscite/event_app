@@ -24,7 +24,7 @@ class UpcomingFragment : Fragment() {
     private var _binding: FragmentUpcomingBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var recyclerViewDelegate: RecyclerViewDelegate<ListAdapter<ListEventsItem, *>>
+    private lateinit var recyclerViewDelegate: RecyclerViewDelegate<ListEventsItem, ListAdapter<ListEventsItem, *>>
     private lateinit var errorPageNavigator: ErrorFragmentNavigator
 
     override fun onCreateView(
@@ -45,7 +45,7 @@ class UpcomingFragment : Fragment() {
 
         recyclerViewDelegate.setup()
 
-        initializeEvents()
+        viewModel.getUpcomingEvents()
 
         setLatestUpcomingViewModel()
         viewModel.errorState.error.observe(viewLifecycleOwner) {
@@ -82,10 +82,6 @@ class UpcomingFragment : Fragment() {
                 findNavController().navigate(toEventDetail)
             }
         )
-    }
-
-    private fun initializeEvents() {
-        viewModel.getUpcomingEvents()
     }
 
     private fun showLoading(isLoading: Boolean) {

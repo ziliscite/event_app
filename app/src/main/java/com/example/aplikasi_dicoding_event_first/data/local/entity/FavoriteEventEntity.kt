@@ -3,24 +3,25 @@ package com.example.aplikasi_dicoding_event_first.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.aplikasi_dicoding_event_first.utils.data.IEvent
 
 @Entity(tableName = "event")
 class FavoriteEventEntity(
     @field:ColumnInfo(name = "eventId")
     @field:PrimaryKey
-    val eventId: Int,
+    override val id: Int,
 
     @field:ColumnInfo("name")
-    val name: String,
+    override val name: String,
+
+    @field:ColumnInfo("summary")
+    override val summary: String,
+
+    @field:ColumnInfo("imageLogo")
+    override val imageLogo: String,
 
     @field:ColumnInfo("category")
     val category: String,
-
-    @field:ColumnInfo("summary")
-    val summary: String,
-
-    @field:ColumnInfo("imageLogo")
-    val imageLogo: String,
 
     @field:ColumnInfo("link")
     val link: String,
@@ -51,4 +52,4 @@ class FavoriteEventEntity(
 
 //    @field:ColumnInfo(name = "isFavorite")
 //    var isFavorite: Boolean,
-)
+) : IEvent
