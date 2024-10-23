@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.aplikasi_dicoding_event_first.EventsFavoriteAdapter
 import com.example.aplikasi_dicoding_event_first.data.local.entity.FavoriteEventEntity
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentFavoriteBinding
-import com.example.aplikasi_dicoding_event_first.ui.upcoming.UpcomingFragmentDirections
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
 

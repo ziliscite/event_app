@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
 import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentFinishedBinding
+import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
 
 class FinishedFragment : Fragment() {
-    private val viewModel: FinishedViewModel by viewModels()
+    private val viewModel: FinishedViewModel by viewModels<FinishedViewModel> {
+        FinishedViewModelFactory.getInstance()
+    }
 
     private var _binding: FragmentFinishedBinding? = null
     private val binding get() = _binding!!
@@ -45,36 +48,39 @@ class FinishedFragment : Fragment() {
         recyclerViewDelegate.setup()
 
         binding.searchButton.setOnClickListener {
-            searchEvents(binding.tfSearch.text.toString())
+            searchFinishedEvents(binding.tfSearch.text.toString())
             val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
-        // Initialize rv
-        initializeEvents()
+        initializeFinishedEvents()
 
-        viewModel.events.observe(viewLifecycleOwner) {
-            it?.let {
-                recyclerViewDelegate.update(it)
+        viewModel.errorState.error.observe(viewLifecycleOwner) {
+            errorPageNavigator.showError(it.first, it.second)
+        }
+    }
+
+    private fun initializeFinishedEvents() {
+        viewModel.finishedEvents.observe(viewLifecycleOwner) {
+            when(it) {
+                is EventResult.Success -> {
+                    showLoading(false)
+                    recyclerViewDelegate.update(it.data)
+                }
+                is EventResult.Error -> {
+                    showLoading(false)
+                }
+                is EventResult.Loading -> {
+                    showLoading(true)
+                }
             }
 
-            // Observe scroll position
             viewModel.scrollState.position.observe(viewLifecycleOwner) { pos ->
                 recyclerViewDelegate.setPosition(pos.first, pos.second)
             }
         }
 
-        viewModel.errorState.error.observe(viewLifecycleOwner) {
-            errorPageNavigator.showError(it.first, it.second)
-        }
-
-        viewModel.loadingState.isLoading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-    }
-
-    private fun initializeEvents() {
-        viewModel.initiateEvents()
+        viewModel.getFinishedEvents()
     }
 
     private fun createRecyclerViewDelegate() {
@@ -88,8 +94,8 @@ class FinishedFragment : Fragment() {
         )
     }
 
-    private fun searchEvents(query: String) {
-        viewModel.getEvents(query)
+    private fun searchFinishedEvents(query: String) {
+        viewModel.searchFinishedEvents(query)
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -125,8 +131,6 @@ class FinishedFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
-        viewModel.onChange()
 
         val position = recyclerViewDelegate.getPosition()
         viewModel.scrollState.savePosition(position.first, position.second)

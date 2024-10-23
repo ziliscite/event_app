@@ -23,7 +23,6 @@ class ErrorFragment : Fragment() {
         // Get the error message from the arguments and set it to the TextView
         val message = arguments?.getString("error_message") ?: "Unknown error"
         binding.tvMessage.text = message
-
         return binding.root
     }
 
