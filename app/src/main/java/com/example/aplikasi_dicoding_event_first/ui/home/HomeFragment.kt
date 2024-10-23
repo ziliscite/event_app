@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,8 +13,9 @@ import com.example.aplikasi_dicoding_event_first.EventsGridAdapter
 import com.example.aplikasi_dicoding_event_first.EventsListAdapter
 import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentHomeBinding
+import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
-import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorPageDelegate
+import com.example.aplikasi_dicoding_event_first.utils.ui.VisibilityHandler
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -25,7 +24,13 @@ class HomeFragment : Fragment() {
     private lateinit var upcomingAdapter: EventsGridAdapter
     private lateinit var finishedAdapter: EventsListAdapter
 
-    private val viewModel: HomeViewModel by viewModels()
+    private lateinit var upcomingVisibilityHandler: VisibilityHandler
+    private lateinit var finishedVisibilityHandler: VisibilityHandler
+
+    private val viewModel: HomeViewModel by viewModels<HomeViewModel>{
+        HomeViewModelFactory.getInstance()
+    }
+
     private lateinit var errorUpcomingPageNavigator: ErrorFragmentNavigator
     private lateinit var errorFinishedPageNavigator: ErrorFragmentNavigator
 
@@ -38,6 +43,9 @@ class HomeFragment : Fragment() {
 
         errorUpcomingPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentUpcomingContainer)
         errorFinishedPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentFinishedContainer)
+
+        initializeVisibilityHandler()
+
         return binding.root
     }
 
@@ -46,19 +54,11 @@ class HomeFragment : Fragment() {
 
         initializeAdapters()
         initializeViewModel()
-
-        viewModel.getFinishedEvents()
-        viewModel.getUpcomingEvents()
     }
 
     private fun initializeViewModel(){
-        viewModel.finishedEvents.observe(viewLifecycleOwner) {
-            updateFinished(it)
-        }
-
-        viewModel.upcomingEvents.observe(viewLifecycleOwner) {
-            updateUpcoming(it)
-        }
+        initializeFinishedEvents()
+        initializeUpcomingEvents()
 
         viewModel.finishedErrorState.error.observe(viewLifecycleOwner) {
             errorFinishedPageNavigator.showError(it.first, it.second)
@@ -67,57 +67,69 @@ class HomeFragment : Fragment() {
         viewModel.upcomingErrorState.error.observe(viewLifecycleOwner) {
             errorUpcomingPageNavigator.showError(it.first, it.second)
         }
+    }
 
-        viewModel.finishedLoadingState.isLoading.observe(viewLifecycleOwner) {
-            showLoading(
-                it, binding.pbFinishedEvents, viewModel.finishedErrorState,
-                binding.rvFinishedEvents, binding.errorFragmentFinishedContainer
-            )
+    private fun initializeFinishedEvents() {
+        viewModel.finishedEvents.observe(viewLifecycleOwner) {
+            when(it) {
+                is EventResult.Success -> {
+                    showFinishedLoading(false)
+                    updateFinished(it.data)
+                }
+                is EventResult.Error -> {
+                    showFinishedLoading(false)
+                }
+                is EventResult.Loading -> {
+                    showFinishedLoading(true)
+                }
+            }
         }
 
-        viewModel.upcomingLoadingState.isLoading.observe(viewLifecycleOwner) {
-            showLoading(
-                it, binding.pbUpcomingEvents, viewModel.upcomingErrorState,
-                binding.rvUpcomingEvents, binding.errorFragmentUpcomingContainer
-            )
+        viewModel.getFinishedEvents()
+    }
+
+    private fun initializeUpcomingEvents() {
+        viewModel.upcomingEvents.observe(viewLifecycleOwner) {
+            when(it) {
+                is EventResult.Success -> {
+                    showUpcomingLoading(false)
+                    updateUpcoming(it.data)
+                }
+                is EventResult.Error -> {
+                    showUpcomingLoading(false)
+                }
+                is EventResult.Loading -> {
+                    showUpcomingLoading(true)
+                }
+            }
+        }
+
+        viewModel.getUpcomingEvents()
+    }
+
+    private fun showUpcomingLoading(isLoading: Boolean) {
+        upcomingVisibilityHandler.setLoadingState(isLoading, viewModel.upcomingErrorState.error.value?.first ?: false)
+    }
+
+    private fun showFinishedLoading(isLoading: Boolean) {
+        finishedVisibilityHandler.setLoadingState(isLoading, viewModel.finishedErrorState.error.value?.first ?: false)
+    }
+
+    private fun initializeVisibilityHandler() {
+        binding.run {
+            upcomingVisibilityHandler = VisibilityHandler(pbUpcomingEvents, errorFragmentUpcomingContainer) { isVisible ->
+                rvVisibilityCallback(isVisible, rvUpcomingEvents)
+            }
+
+            finishedVisibilityHandler = VisibilityHandler(pbFinishedEvents, errorFragmentFinishedContainer) { isVisible ->
+                rvVisibilityCallback(isVisible, rvFinishedEvents)
+            }
         }
     }
 
-    private fun showLoading(
-        isLoading: Boolean, progressBar: ProgressBar, errorState: ErrorPageDelegate,
-        recyclerView: RecyclerView, errorFragmentContainer: FragmentContainerView
-    ) {
-        if (isLoading) {
-            progressBar.visibility = View.VISIBLE
-            hideUI(errorState, recyclerView, errorFragmentContainer)
-        } else {
-            progressBar.visibility = View.GONE
-            showUI(errorState, recyclerView, errorFragmentContainer)
-        }
-    }
-
-    private fun hideUI(
-        errorState: ErrorPageDelegate,
-        recyclerView: RecyclerView,
-        errorFragmentContainer: FragmentContainerView
-    ) {
-        if (errorState.error.value?.first != true) {
-            recyclerView.visibility = View.GONE
-        } else {
-            errorFragmentContainer.visibility = View.GONE
-        }
-    }
-
-    private fun showUI(
-        errorState: ErrorPageDelegate,
-        recyclerView: RecyclerView,
-        errorFragmentContainer: FragmentContainerView
-    ) {
-        if (errorState.error.value?.first != true) {
-            recyclerView.visibility = View.VISIBLE
-        } else {
-            errorFragmentContainer.visibility = View.VISIBLE
-        }
+    private fun rvVisibilityCallback(isVisible: Boolean, recyclerView: RecyclerView) {
+        val visibility = if (isVisible) View.VISIBLE else View.GONE
+        recyclerView.visibility = visibility
     }
 
     private fun updateUpcoming(newData: List<ListEventsItem>) {

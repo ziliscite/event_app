@@ -1,27 +1,28 @@
-package com.example.aplikasi_dicoding_event_first.ui.finished
+package com.example.aplikasi_dicoding_event_first.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.aplikasi_dicoding_event_first.di.Injection
 import com.example.aplikasi_dicoding_event_first.repository.EventRepository
-class FinishedViewModelFactory private constructor(
+
+class HomeViewModelFactory private constructor(
     private val eventRepository: EventRepository
 ) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FinishedViewModel::class.java)) {
-            return FinishedViewModel(eventRepository) as T
+        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            return HomeViewModel(eventRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
 
     companion object {
         @Volatile
-        private var instance: FinishedViewModelFactory? = null
-        fun getInstance(): FinishedViewModelFactory {
+        private var instance: HomeViewModelFactory? = null
+        fun getInstance(): HomeViewModelFactory {
             return instance ?: synchronized(this) {
                 val repository = Injection.provideRepository()
-                instance ?: FinishedViewModelFactory(repository)
+                instance ?: HomeViewModelFactory(repository)
             }.also {
                 instance = it
             }

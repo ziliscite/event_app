@@ -6,6 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+// The older ones is for the past submission, now deleted
 interface ApiServiceNew {
     @GET("events")
     suspend fun getEvents(

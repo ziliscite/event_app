@@ -1,4 +1,4 @@
-package com.example.aplikasi_dicoding_event_first.data.manager
+package com.example.aplikasi_dicoding_event_first.data.local.manager
 
 import android.content.Context
 import androidx.datastore.core.DataStore

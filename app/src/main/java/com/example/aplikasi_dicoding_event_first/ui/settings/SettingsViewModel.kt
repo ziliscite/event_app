@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.aplikasi_dicoding_event_first.data.manager.SettingsPreferences
+import com.example.aplikasi_dicoding_event_first.data.local.manager.SettingsPreferences
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(

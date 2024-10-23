@@ -5,55 +5,68 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aplikasi_dicoding_event_first.data.remote.response.ListEventsItem
-import com.example.aplikasi_dicoding_event_first.utils.network.EventsFetcher
-import com.example.aplikasi_dicoding_event_first.utils.network.EventsResponseHandler
+import com.example.aplikasi_dicoding_event_first.repository.EventRepository
+import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorPageDelegate
-import com.example.aplikasi_dicoding_event_first.utils.ui.LoadingStateDelegate
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
-    private val eventsFetcher: EventsFetcher = EventsFetcher
-    private val eventsHandler: EventsResponseHandler = EventsResponseHandler
+class HomeViewModel(
+    private val eventRepository: EventRepository
+) : ViewModel() {
+    private val _finishedEvents = MutableLiveData<EventResult<List<ListEventsItem>>>()
+    val finishedEvents: LiveData<EventResult<List<ListEventsItem>>> get() = _finishedEvents
 
-    private val _finishedEvents = MutableLiveData<List<ListEventsItem>>()
-    val finishedEvents: LiveData<List<ListEventsItem>> get() = _finishedEvents
-
-    private val _upcomingEvents = MutableLiveData<List<ListEventsItem>>()
-    val upcomingEvents: LiveData<List<ListEventsItem>> get() = _upcomingEvents
-
-    val finishedLoadingState: LoadingStateDelegate = LoadingStateDelegate()
-    val upcomingLoadingState: LoadingStateDelegate = LoadingStateDelegate()
+    private val _upcomingEvents = MutableLiveData<EventResult<List<ListEventsItem>>>()
+    val upcomingEvents: LiveData<EventResult<List<ListEventsItem>>> get() = _upcomingEvents
 
     val finishedErrorState: ErrorPageDelegate = ErrorPageDelegate()
     val upcomingErrorState: ErrorPageDelegate = ErrorPageDelegate()
 
-    fun getFinishedEvents() { viewModelScope.launch {
-        if (!_finishedEvents.value.isNullOrEmpty() && finishedErrorState.error.value?.first == false) {
-            return@launch
-        }
-
-        finishedLoadingState.wrapRequest {
-            val response = eventsFetcher.fetchEvents(0, limit = 5, logTag = TAG)
-            eventsHandler.getEventsHandler(response, finishedErrorState) {
-                _finishedEvents.value = it
-            }
-        }
-    }}
-
     fun getUpcomingEvents() { viewModelScope.launch {
-        if (!_upcomingEvents.value.isNullOrEmpty() && upcomingErrorState.error.value?.first == false) {
+        if (upcomingEvents.value.let { it is EventResult.Success }) {
             return@launch
         }
 
-        upcomingLoadingState.wrapRequest {
-            val response = eventsFetcher.fetchEvents(1, limit = 5, logTag = TAG)
-            eventsHandler.getEventsHandler(response, upcomingErrorState) {
-                _upcomingEvents.value = it
+        _upcomingEvents.postValue(EventResult.Loading)
+        when (val response = eventRepository.getEvents(1, limit = 5)) {
+            is EventResult.Success -> {
+                upcomingErrorState.setError(false, "")
+                _upcomingEvents.postValue(EventResult.Success(response.data))
+            }
+
+            is EventResult.Error -> {
+                upcomingErrorState.setError(true, response.error)
+                _upcomingEvents.postValue(EventResult.Error(response.error))
+            }
+
+            is EventResult.Loading -> {
+                upcomingErrorState.setError(false, "")
+                _upcomingEvents.postValue(EventResult.Loading)
             }
         }
     }}
 
-    companion object {
-        private const val TAG = "FinishedViewModel"
-    }
+    fun getFinishedEvents() { viewModelScope.launch {
+        if (finishedEvents.value.let { it is EventResult.Success }) {
+            return@launch
+        }
+
+        _finishedEvents.postValue(EventResult.Loading)
+        when (val response = eventRepository.getEvents(0, limit = 5)) {
+            is EventResult.Success -> {
+                finishedErrorState.setError(false, "")
+                _finishedEvents.postValue(EventResult.Success(response.data))
+            }
+
+            is EventResult.Error -> {
+                finishedErrorState.setError(true, response.error)
+                _finishedEvents.postValue(EventResult.Error(response.error))
+            }
+
+            is EventResult.Loading -> {
+                finishedErrorState.setError(false, "")
+                _finishedEvents.postValue(EventResult.Loading)
+            }
+        }
+    }}
 }

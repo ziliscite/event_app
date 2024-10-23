@@ -6,7 +6,7 @@ import com.google.android.material.color.DynamicColors
 class EventApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        // unapply dynamic color
+        // un-apply dynamic color that was applied on the first submission
 //        DynamicColors.applyToActivitiesIfAvailable(this)
     }
 }

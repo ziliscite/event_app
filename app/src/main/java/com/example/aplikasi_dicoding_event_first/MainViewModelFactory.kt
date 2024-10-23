@@ -3,7 +3,7 @@ package com.example.aplikasi_dicoding_event_first
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.aplikasi_dicoding_event_first.data.manager.SettingsPreferences
+import com.example.aplikasi_dicoding_event_first.data.local.manager.SettingsPreferences
 import com.example.aplikasi_dicoding_event_first.di.Injection
 
 class MainViewModelFactory private constructor(
