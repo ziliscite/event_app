@@ -17,6 +17,7 @@ import com.example.aplikasi_dicoding_event_first.databinding.FragmentFinishedBin
 import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
 import com.example.aplikasi_dicoding_event_first.utils.ui.RecyclerViewDelegate
+import com.example.aplikasi_dicoding_event_first.utils.ui.VisibilityHandler
 
 class FinishedFragment : Fragment() {
     private val viewModel: FinishedViewModel by viewModels<FinishedViewModel> {
@@ -25,6 +26,8 @@ class FinishedFragment : Fragment() {
 
     private var _binding: FragmentFinishedBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var visibilityHandler: VisibilityHandler
 
     private lateinit var recyclerViewDelegate: RecyclerViewDelegate<ListEventsItem, ListAdapter<ListEventsItem, *>>
     private lateinit var errorPageNavigator: ErrorFragmentNavigator
@@ -38,6 +41,11 @@ class FinishedFragment : Fragment() {
 
         createRecyclerViewDelegate()
         errorPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentContainer)
+
+        visibilityHandler = VisibilityHandler(binding.progressBar, binding.errorFragmentContainer) { isVisible ->
+            val visibility = if (isVisible) View.VISIBLE else View.GONE
+            binding.rvEvents.visibility = visibility
+        }
 
         return binding.root
     }
@@ -99,29 +107,7 @@ class FinishedFragment : Fragment() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-            hideUI()
-        } else {
-            binding.progressBar.visibility = View.GONE
-            showUI()
-        }
-    }
-
-    private fun hideUI() {
-        if (viewModel.errorState.error.value?.first != true) {
-            binding.rvEvents.visibility = View.GONE
-        } else {
-            binding.errorFragmentContainer.visibility = View.GONE
-        }
-    }
-
-    private fun showUI() {
-        if (viewModel.errorState.error.value?.first != true) {
-            binding.rvEvents.visibility = View.VISIBLE
-        } else {
-            binding.errorFragmentContainer.visibility = View.VISIBLE
-        }
+        visibilityHandler.setLoadingState(isLoading, viewModel.errorState.error.value?.first ?: false)
     }
 
     override fun onDestroyView() {

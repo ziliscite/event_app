@@ -24,21 +24,18 @@ class VisibilityHandler(
     private fun showLoading() {
         progressBar.visibility = View.VISIBLE
         contentViewCallback(false)
-//        contentView.visibility = View.GONE
         errorView.visibility = View.GONE
     }
 
     private fun showContent() {
         progressBar.visibility = View.GONE
         contentViewCallback(true)
-//        contentView.visibility = View.VISIBLE
         errorView.visibility = View.GONE
     }
 
     private fun showError() {
         progressBar.visibility = View.GONE
         contentViewCallback(false)
-//        contentView.visibility = View.GONE
         errorView.visibility = View.VISIBLE
     }
 }

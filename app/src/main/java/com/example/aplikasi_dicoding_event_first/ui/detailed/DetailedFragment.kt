@@ -20,6 +20,7 @@ import com.example.aplikasi_dicoding_event_first.data.remote.response.Event
 import com.example.aplikasi_dicoding_event_first.databinding.FragmentDetailedBinding
 import com.example.aplikasi_dicoding_event_first.utils.network.EventResult
 import com.example.aplikasi_dicoding_event_first.utils.ui.ErrorFragmentNavigator
+import com.example.aplikasi_dicoding_event_first.utils.ui.VisibilityHandler
 
 class DetailedFragment : Fragment() {
     private var _binding: FragmentDetailedBinding? = null
@@ -29,6 +30,7 @@ class DetailedFragment : Fragment() {
         DetailedViewModelFactory.getInstance(requireContext())
     }
 
+    private lateinit var visibilityHandler: VisibilityHandler
     private lateinit var errorPageNavigator: ErrorFragmentNavigator
 
     override fun onCreateView(
@@ -37,6 +39,10 @@ class DetailedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailedBinding.inflate(inflater, container, false)
+
+        visibilityHandler = VisibilityHandler(binding.progressBar, binding.errorFragmentContainer) {
+            visibilityUI(it)
+        }
 
         errorPageNavigator = ErrorFragmentNavigator(parentFragmentManager, binding.errorFragmentContainer)
         return binding.root
@@ -55,8 +61,8 @@ class DetailedFragment : Fragment() {
 
     private fun initializeEventDetail(eventId: Int) {
         viewModel.getEventDetailFavorite(eventId).observe(viewLifecycleOwner) {
+            showLoading(true)
             if(it != null) {
-                showLoading(false)
                 setLayout(
                     it.run {
                         Event(
@@ -77,6 +83,7 @@ class DetailedFragment : Fragment() {
                         )
                     }, isFavorite = true
                 )
+                showLoading(false)
             } else {
                 viewModel.detailEvent.observe(viewLifecycleOwner) { event ->
                     when(event) {
@@ -119,36 +126,11 @@ class DetailedFragment : Fragment() {
     private fun initializeViewModel() {
         viewModel.errorState.error.observe(viewLifecycleOwner) {
             errorPageNavigator.showError(it.first, it.second)
-            if (it.first) {
-                visibilityUI(false)
-            }
         }
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-            hideUI()
-        } else {
-            binding.progressBar.visibility = View.GONE
-            showUI()
-        }
-    }
-
-    private fun hideUI() {
-        if (viewModel.errorState.error.value?.first != true) {
-            visibilityUI(false)
-        } else {
-            binding.errorFragmentContainer.visibility = View.GONE
-        }
-    }
-
-    private fun showUI() {
-        if (viewModel.errorState.error.value?.first != true) {
-            visibilityUI(true)
-        } else {
-            binding.errorFragmentContainer.visibility = View.VISIBLE
-        }
+        visibilityHandler.setLoadingState(isLoading, viewModel.errorState.error.value?.first ?: false)
     }
 
     private fun setLayout(event: Event, isFavorite: Boolean = false) {
