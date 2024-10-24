@@ -65,6 +65,7 @@ class ReminderWorker(
             .setAutoCancel(true)
 
         // SDK_INT is always >= 28 (API 30), so, version checking is not required
+        // -- recommended by the IDE
         val channel = NotificationChannel(
             CHANNEL_ID,
             CHANNEL_NAME,

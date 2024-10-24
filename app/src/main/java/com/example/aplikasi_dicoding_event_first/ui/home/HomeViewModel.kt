@@ -28,21 +28,8 @@ class HomeViewModel(
         }
 
         _upcomingEvents.postValue(EventResult.Loading)
-        when (val response = eventRepository.getEvents(1, limit = 5)) {
-            is EventResult.Success -> {
-                upcomingErrorState.setError(false, "")
-                _upcomingEvents.postValue(EventResult.Success(response.data))
-            }
-
-            is EventResult.Error -> {
-                upcomingErrorState.setError(true, response.error)
-                _upcomingEvents.postValue(EventResult.Error(response.error))
-            }
-
-            is EventResult.Loading -> {
-                upcomingErrorState.setError(false, "")
-                _upcomingEvents.postValue(EventResult.Loading)
-            }
+        responseHandler(eventRepository.getEvents(1, limit = 5)) {
+            _upcomingEvents.postValue(it)
         }
     }}
 
@@ -52,21 +39,28 @@ class HomeViewModel(
         }
 
         _finishedEvents.postValue(EventResult.Loading)
-        when (val response = eventRepository.getEvents(0, limit = 5)) {
-            is EventResult.Success -> {
-                finishedErrorState.setError(false, "")
-                _finishedEvents.postValue(EventResult.Success(response.data))
-            }
-
-            is EventResult.Error -> {
-                finishedErrorState.setError(true, response.error)
-                _finishedEvents.postValue(EventResult.Error(response.error))
-            }
-
-            is EventResult.Loading -> {
-                finishedErrorState.setError(false, "")
-                _finishedEvents.postValue(EventResult.Loading)
-            }
+        responseHandler(eventRepository.getEvents(0, limit = 5)) {
+            _finishedEvents.postValue(it)
         }
     }}
+
+    private fun responseHandler(
+        response: EventResult<List<ListEventsItem>>,
+        callback: (EventResult<List<ListEventsItem>>) -> Unit
+    ) {
+        when (response) {
+            is EventResult.Success -> {
+                finishedErrorState.setError(false, "")
+                callback(EventResult.Success(response.data))
+            }
+            is EventResult.Error -> {
+                finishedErrorState.setError(true, response.error)
+                callback(EventResult.Error(response.error))
+            }
+            is EventResult.Loading -> {
+                finishedErrorState.setError(false, "")
+                callback(EventResult.Loading)
+            }
+        }
+    }
 }

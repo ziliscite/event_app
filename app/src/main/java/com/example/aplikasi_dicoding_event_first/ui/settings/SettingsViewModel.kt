@@ -1,7 +1,6 @@
 package com.example.aplikasi_dicoding_event_first.ui.settings
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
