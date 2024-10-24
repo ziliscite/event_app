@@ -56,6 +56,47 @@ class EventRepository(
         }
     }
 
+    suspend fun getLatestEvent(): EventResult<Event> {
+        return try {
+            val response = apiService.getEvents(active = -1, limit = 1)
+            if (response.error) {
+                throw Exception(response.message)
+            }
+
+            val events = response.listEvents
+            if (events.isEmpty()) {
+                throw Exception("No events found")
+            }
+
+            val event = events[0].run {
+                Event(
+                    id = id,
+                    summary = summary,
+                    mediaCover = mediaCover,
+                    name = name,
+                    category = category,
+                    imageLogo = imageLogo,
+                    link = link,
+                    description = description,
+                    ownerName = ownerName,
+                    cityName = cityName,
+                    registrants = registrants,
+                    quota = quota,
+                    beginTime = beginTime,
+                    endTime = endTime,
+                )
+            }
+
+            EventResult.Success(event)
+        } catch (e: IOException) {
+            Log.e("EventRepository", "onFailure: ${e.message.toString()}")
+            EventResult.Error("Internet connection problem")
+        } catch (e: Exception) {
+            Log.e("EventRepository", "onFailure: ${e.message.toString()}")
+            EventResult.Error(e.message.toString())
+        }
+    }
+
     companion object {
         @Volatile
         private var instance: EventRepository? = null

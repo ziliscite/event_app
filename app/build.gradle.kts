@@ -75,9 +75,11 @@ dependencies {
 
     implementation(libs.jsoup)
 
-    ksp(libs.androidx.room.compiler) // Replace with actual version
-    implementation(libs.androidx.room.runtime) // Replace with actual version
-    implementation(libs.androidx.room.ktx) // Replace with actual version
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
 
-    implementation(libs.androidx.datastore.preferences) // Replace with actual version
+    implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.androidx.work.runtime)
 }

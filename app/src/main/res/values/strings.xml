@@ -33,7 +33,9 @@
     <string name="ke_acara">ke acara</string>
 
     <string name="dark_mode_description">Enable Dark Mode</string>
+    <string name="dark_mode_description_disabled">Disable Dark Mode</string>
     <string name="title_daily_reminder">Daily Reminder</string>
-    <string name="daily_reminder_description">Enable Notification; will appear every day at 9 AM</string>
+    <string name="daily_reminder_description">Enable Notification; will appear every day at %1$s</string>
+    <string name="daily_reminder_description_reminded">Disable Notification; will appear every day at %1$s</string>
     <string name="title_dark_mode">Dark Mode</string>
 </resources>

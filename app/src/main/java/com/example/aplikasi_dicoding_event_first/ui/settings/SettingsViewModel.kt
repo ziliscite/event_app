@@ -11,9 +11,6 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     private val preferences: SettingsPreferences
 ) : ViewModel() {
-    private var _reminderSetting: MutableLiveData<Boolean> = MutableLiveData()
-    val reminderSetting: LiveData<Boolean> get() = _reminderSetting
-
     fun getThemeSettings(): LiveData<Boolean> {
         return preferences.getThemeSetting().asLiveData()
     }
@@ -22,11 +19,9 @@ class SettingsViewModel(
         preferences.saveThemeSetting(isDarkModeActive)
     }}
 
-    fun getReminderSettings() { viewModelScope.launch {
-        preferences.getReminderSetting().collect{
-            _reminderSetting.postValue(it)
-        }
-    }}
+    fun getReminderSettings(): LiveData<Boolean> {
+        return preferences.getReminderSetting().asLiveData()
+    }
 
     fun saveReminderSetting(isReminderActive: Boolean) { viewModelScope.launch {
         preferences.saveReminderSetting(isReminderActive)
